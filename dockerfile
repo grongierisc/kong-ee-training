@@ -8,8 +8,12 @@ RUN iris start IRIS \
 	&& iris stop IRIS quietly
 
 FROM iris-iam
+
+ARG IRIS_PASSWORD
+RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/changePassword.sh /tmp/password.txt
+
 USER root   
-        
+
 WORKDIR /opt/irisapp
 RUN chown ${ISC_PACKAGE_MGRUSER}:${ISC_PACKAGE_IRISGROUP} /opt/irisapp
 USER ${ISC_PACKAGE_MGRUSER}

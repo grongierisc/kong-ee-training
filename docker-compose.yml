@@ -4,6 +4,8 @@ services:
     build: 
       context: .
       dockerfile: dockerfile
+      args: 
+        - IRIS_PASSWORD=$IRIS_PASSWORD
     restart: always
     ports: 
       - 51773
