@@ -1,7 +1,13 @@
-ARG IMAGE=intersystemsdc/iris-community:2020.3.0.221.0-zpm
-ARG IMAGE=intersystemsdc/iris-community:2020.4.0.524.0-zpm
-FROM $IMAGE
+ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
+FROM $IMAGE as iris-iam
+COPY key/iris.key /usr/irissys/mgr/iris.key
+COPY iris-iam.script /tmp/iris-iam.script
 
+RUN iris start IRIS \
+	&& iris session IRIS < /tmp/iris-iam.script \
+	&& iris stop IRIS quietly
+
+FROM iris-iam
 USER root   
         
 WORKDIR /opt/irisapp
