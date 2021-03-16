@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: dockerfile
       args: 
-        - IRIS_PASSWORD=$IRIS_PASSWORD
+        - IRIS_PASSWORD=${IRIS_PASSWORD}
     restart: always
     ports: 
       - 51773
@@ -14,7 +14,10 @@ services:
     volumes:
       - ./:/irisdev/app
   iam-migrations:
-    image: intersystems/iam:1.5.0.9-4
+    image: intersystems/iam-custom:1.5.0.9-4
+    build: 
+      context: iam
+      dockerfile: dockerfile
     command: kong migrations bootstrap up
     depends_on:
       - db
@@ -25,12 +28,16 @@ services:
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-iam}
       KONG_PG_USER: ${KONG_PG_USER:-iam}
       KONG_CASSANDRA_CONTACT_POINTS: db
-      ISC_IRIS_URL: IAM:$IRIS_PASSWORD@iris:52773/api/iam/license
+      KONG_PLUGINS: bundled,jwt-crafter
+      ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@iris:52773/api/iam/license
     restart: on-failure
     links:
       - db:db
   iam:
-    image: intersystems/iam:1.5.0.9-4
+    image: intersystems/iam-custom:1.5.0.9-4
+    build: 
+      context: iam
+      dockerfile: dockerfile
     depends_on:
       - db
     environment:
@@ -50,7 +57,8 @@ services:
       KONG_PORTAL_GUI_PROTOCOL: http
       KONG_PORTAL_GUI_HOST: '127.0.0.1:8003'
       KONG_ADMIN_GUI_URL: http://localhost:8002
-      ISC_IRIS_URL: IAM:$IRIS_PASSWORD@iris:52773/api/iam/license
+      KONG_PLUGINS: bundled,jwt-crafter
+      ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@iris:52773/api/iam/license
     volumes: 
       - ./iam:/iam
     links:
