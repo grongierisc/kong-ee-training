@@ -57,7 +57,7 @@ services:
       KONG_PORTAL_GUI_PROTOCOL: http
       KONG_PORTAL_GUI_HOST: '127.0.0.1:8003'
       KONG_ADMIN_GUI_URL: http://localhost:8002
-      KONG_PLUGINS: bundled,jwt-crafter
+      KONG_PLUGINS: bundled,helloworld
       ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@iris:52773/api/iam/license
     volumes: 
       - ./iam:/iam

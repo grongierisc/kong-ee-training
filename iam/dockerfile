@@ -1,0 +1,8 @@
+FROM intersystems/iam:1.5.0.9-4
+
+USER root
+COPY ./plugins /custom/plugins
+
+RUN cd /custom/plugins/kong-plugin-helloworld && luarocks make
+#USER kong
+
