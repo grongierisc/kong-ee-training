@@ -32,8 +32,8 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [6.3. Add ACL Plugin](#63-add-acl-plugin)
   - [6.4. Configure USER with ACL and credentials](#64-configure-user-with-acl-and-credentials)
   - [6.5. Test it !](#65-test-it-)
-- [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
-  - [7.1. Correction](#71-correction)
+  - [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
+    - [7.1. Solution](#71-solution)
 - [8. Dev Portal](#8-dev-portal)
   - [8.1. Overview](#81-overview)
   - [8.2. Enable it !](#82-enable-it-)
@@ -724,12 +724,12 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </tr>
 </table>
 
-# 7. Exercice, Rate-Limiting
+## 7. Exercice, Rate-Limiting
 
 1. Enable Unauthenticated user
 2. Limite rate by 2 calls per minutes to Unauthenticated user
 
-## 7.1. Correction
+### 7.1. Solution
 
 1. Enable Unauthenticated user
 
