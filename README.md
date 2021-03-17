@@ -1,14 +1,43 @@
-# InterSystems API Manager Training
+# 1. InterSystems API Manager Training
 
 This repository contains the materials, examples, excercices to learn the basic concepts of IAM.
 
-# TOC
+- [1. InterSystems API Manager Training](#1-intersystems-api-manager-training)
+- [2. Introduction](#2-introduction)
+  - [2.1. What is IAM ?](#21-what-is-iam-)
+  - [2.2. What is an API Managment ?](#22-what-is-an-api-managment-)
+  - [2.3. IAM Portal](#23-iam-portal)
+  - [2.4. Flow of this training](#24-flow-of-this-training)
+- [3. Installation](#3-installation)
+  - [3.1. What do you need to install?](#31-what-do-you-need-to-install)
+  - [3.2. How IAM work's with IRIS](#32-how-iam-works-with-iris)
+  - [3.3. Setup](#33-setup)
+  - [3.4. Install IAM](#34-install-iam)
+    - [3.4.1. Iris Image](#341-iris-image)
+    - [3.4.2. IAM Image](#342-iam-image)
+    - [3.4.3. Update the docker file](#343-update-the-docker-file)
+    - [3.4.4. Update the docker-compose](#344-update-the-docker-compose)
+    - [3.4.5. Option :](#345-option-)
+    - [3.4.6. Test it !](#346-test-it-)
+  - [3.5. First Service/Route/Plugin](#35-first-servicerouteplugin)
+    - [3.5.1. Create a service](#351-create-a-service)
+    - [3.5.2. Create a route](#352-create-a-route)
+    - [3.5.3. Test it !](#353-test-it-)
+  - [3.6. Second, Go futher with plugin](#36-second-go-futher-with-plugin)
+    - [3.6.1. Add a plugin to the service](#361-add-a-plugin-to-the-service)
+    - [3.6.2. Test it !](#362-test-it-)
+  - [3.7. Third, add our own authentication](#37-third-add-our-own-authentication)
+    - [3.7.1. Add consumers](#371-add-consumers)
+  - [3.8. Add Basic auth plugin](#38-add-basic-auth-plugin)
+    - [3.8.1. Add ACL Plugin](#381-add-acl-plugin)
+    - [3.8.2. Configure USER with ACL and credentials](#382-configure-user-with-acl-and-credentials)
+    - [3.8.3. Test it !](#383-test-it-)
+    - [3.8.4. Exercices](#384-exercices)
+    - [3.8.5. Correction](#385-correction)
 
+# 2. Introduction
 
-
-# Introduction
-
-## What is IAM ? 
+## 2.1. What is IAM ? 
 
 IAM stand for InterSystems API Manager, it's based on **Kong Entreprise Edition**.
 
@@ -22,13 +51,13 @@ This mean you have acces on top of Kong OpenSource edition to :
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/KongEEvsOSS.png)
 
-## What is an API Managment ?
+## 2.2. What is an API Managment ?
 
 API management is the process of creating and publishing web application programming interfaces (APIs), enforcing their usage policies, controlling access, nurturing the subscriber community, collecting and analyzing usage statistics, and reporting on performance. API Management components provide mechanisms and tools to support developer and subscriber community.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/Api_Managment.png)
 
-## IAM Portal
+## 2.3. IAM Portal
 
 Kong and IAM are design as API first, this mean, every thing done in Kong/IAM can be done by rest calls or the manager portal.
 
@@ -53,7 +82,7 @@ During this training all example / exercice will present both this way :
 </tr>
 </table>
 
-## Flow of this training
+## 2.4. Flow of this training
 
 The aim of this training is to use IAM as a proxy of an IRIS rest API.
 
@@ -70,8 +99,8 @@ https://github.com/grongierisc/iam-training/blob/training/misc/spec.yml
 Start this training with the main branch.
 
 At the end of the training you should have the same result as the training branch.
-# Installation
-## What do you need to install? 
+# 3. Installation
+## 3.1. What do you need to install? 
 * [Git](https://git-scm.com/downloads) 
 * [Docker](https://www.docker.com/products/docker-desktop) (if you are using Windows, make sure you set your Docker installation to use "Linux containers").
 * [Docker Compose](https://docs.docker.com/compose/install/)
@@ -79,7 +108,7 @@ At the end of the training you should have the same result as the training branc
 * InterSystems IRIS IAM enabled license file.
 * IAM Docker image
 
-## How IAM work's with IRIS
+## 3.2. How IAM work's with IRIS
 
 At Kong/IAM start, the container check for the Kong/IAM license with a curl call.
 
@@ -88,7 +117,7 @@ The endpoint of this call is a rest API on the IRIS container.
 FYI : Kong license is embedded in IRIS one.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/IAM_IRIS.png)
-## Setup
+## 3.3. Setup
 
 Git clone this repository.
 
@@ -111,9 +140,9 @@ http://localhost:52773/swagger-ui/index.html#/
 Login/Password :
 SuperUser/SYS
 
-## Install IAM
+## 3.4. Install IAM
 
-### Iris Image
+### 3.4.1. Iris Image
 
 First you need to swith for the community edition to an licensed one.
 
@@ -131,14 +160,14 @@ docker login -u="user" -p="token" containers.intersystems.com
 docker pull containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
 ```
 
-### IAM Image
+### 3.4.2. IAM Image
 In [WRC Software Distribution](https://wrc.intersystems.com/wrc/coDistribution.csp):
 * Components > Download *IAM-1.5.0.9-4.tar.gz* file, unzip & untar and then load the image:
 ```bash
 docker load -i iam_image.tar
 ```
 
-### Update the docker file
+### 3.4.3. Update the docker file
 
 Change IRIS community edition to a licensed one.
 * containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
@@ -182,7 +211,7 @@ write "User "_userName_" was updated!",!
 halt
 ```
 
-### Update the docker-compose
+### 3.4.4. Update the docker-compose
 
 Update the docker-compose file to :
 
@@ -293,7 +322,7 @@ Add the .env file in root folder :
 IRIS_PASSWORD=SYS
 ```
 
-### Option :
+### 3.4.5. Option :
 
 For ease of use (and may be security), you can use the .env file in the IRIS dockerfile.
 
@@ -314,13 +343,13 @@ ARG IRIS_PASSWORD
 RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/changePassword.sh /tmp/password.txt
 ```
 
-### Test it !
+### 3.4.6. Test it !
 
 ```sh
 docker-compose -f "docker-compose.yml" up -d --build
 ```
 
-## First Service/Route/Plugin
+## 3.5. First Service/Route/Plugin
 
 Remember how Kong/IAM works ?
 
@@ -332,7 +361,7 @@ Here, we will build :
 * a route
   * to acccess this service
 
-### Create a service
+### 3.5.1. Create a service
 
 <table>
 <tr>
@@ -362,7 +391,7 @@ curl -i -X POST \
 
 What do we see here, to create a service we simply need it's url.
 
-### Create a route
+### 3.5.2. Create a route
 
 <table>
 <tr>
@@ -395,7 +424,7 @@ What do we see here, to create a route we need :
 * it's service name
 * a path where RegEx is allowed 
 
-### Test it !
+### 3.5.3. Test it !
 
 <table>
 <tr>
@@ -437,7 +466,7 @@ What do we see here :
   * The path correspond to the route
   * We still need to authenticate
 
-## Second, Go futher with plugin
+## 3.6. Second, Go futher with plugin
 
 To go futher, we will try to auto-authenticate Kong to the IRIS endpoint.
 
@@ -445,7 +474,7 @@ To do so, we will use and plugin, resquest-transformer.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/auto_authenticate.png)
 
-### Add a plugin to the service
+### 3.6.1. Add a plugin to the service
 
 <table>
 <tr>
@@ -473,7 +502,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-### Test it !
+### 3.6.2. Test it !
 
 <table>
 <tr>
@@ -513,13 +542,13 @@ What do we see here :
 * We reatch the data without authentification
 
 
-## Third, add our own authentication
+## 3.7. Third, add our own authentication
 
 What we want to achived here is to add our own authentication without any distuption of the orignial API.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/custom_auth.png)
 
-### Add consumers
+### 3.7.1. Add consumers
 
 <table>
 <tr>
@@ -564,7 +593,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-## Add Basic auth plugin
+## 3.8. Add Basic auth plugin
 
 <table>
 <tr>
@@ -594,7 +623,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 Where :
 * config.anonymous = uuid of anonymous consumer
 
-### Add ACL Plugiin
+### 3.8.1. Add ACL Plugin
 
 <table>
 <tr>
@@ -621,7 +650,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </tr>
 </table>
 
-### Configure USER with ACL and credentials
+### 3.8.2. Configure USER with ACL and credentials
 
 
 <table>
@@ -652,7 +681,7 @@ curl -i -X POST http://localhost:8001/consumers/user/basic-auth \
 </tr>
 </table>
 
-### Test it !
+### 3.8.3. Test it !
 
 <table>
 <tr>
@@ -688,12 +717,12 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </tr>
 </table>
 
-### Exercices
+### 3.8.4. Exercices
 
 1. Enable Unauthenticated user
 2. Limite rate by 2 calls per minutes to Unauthenticated user
 
-### Correction
+### 3.8.5. Correction
 
 1. Enable Unauthenticated user
 
