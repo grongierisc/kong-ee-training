@@ -360,7 +360,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-What do we see here, to create a service we simple need it's url.
+What do we see here, to create a service we simply need it's url.
 
 ### Create a route
 
@@ -393,7 +393,7 @@ curl -i -X POST \
 
 What do we see here, to create a route we need :
 * it's service name
-* a path where wildcard is allowed event RegEx
+* a path where RegEx is allowed 
 
 ### Test it !
 
@@ -437,7 +437,7 @@ What do we see here :
   * The path correspond to the route
   * We still need to authenticate
 
-### Go futher
+## Second, Go futher with plugin
 
 To go futher, we will try to auto-authenticate Kong to the IRIS endpoint.
 
@@ -445,7 +445,7 @@ To do so, we will use and plugin, resquest-transformer.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/auto_authenticate.png)
 
-#### Add a plugin to the service
+### Add a plugin to the service
 
 <table>
 <tr>
@@ -473,7 +473,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-#### Test it !
+### Test it !
 
 <table>
 <tr>
@@ -511,3 +511,179 @@ curl –i --location --request GET 'http://localhost:8000/persons/all'
 What do we see here :
 * Error 401 on lecay
 * We reatch the data without authentification
+
+
+## Third, add our own authentication
+
+What we want to achived here is to add our own authentication without any distuption of the orignial API.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/custom_auth.png)
+
+### Add consumers
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/consumer_anonymous.png)
+
+</td>
+<td>
+
+```sh
+# Add consumer anonymous
+curl -i -X POST \
+--url http://localhost:8001/consumers/ \
+--data "username=anonymous" \
+--data "custom_id=anonymous"
+```
+
+</td>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/consumer_user.png)
+
+</td>
+<td>
+
+```sh
+# Add consumer user
+curl -i -X POST \
+--url http://localhost:8001/consumers/ \
+--data "username=user" \
+--data "custom_id=user"
+```
+
+</td>
+</tr>
+</table>
+
+## Add Basic auth plugin
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/basic_auth.png)
+
+</td>
+<td>
+
+```sh
+# Enable basic auth for service
+curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
+--data "name=basic-auth" \
+--data "config.anonymous=5cc8dee4-066d-492e-b2f8-bd77eb0a4c86" \
+--data "config.hide_credentials=false"
+```
+
+</td>
+</tr>
+</table>
+
+Where :
+* config.anonymous = uuid of anonymous consumer
+
+### Add ACL Plugiin
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/acl.png)
+
+</td>
+<td>
+
+```sh
+# Enable ACL
+
+curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
+--data "name=acl" \
+--data "config.whitelist=user"
+```
+
+</td>
+</tr>
+</table>
+
+### Configure USER with ACL and credentials
+
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/user_config.png)
+
+</td>
+<td>
+
+```sh
+# Add consumer group
+curl -i -X POST \
+--url http://localhost:8001/consumers/user/acls \
+--data "group=user"
+# Add consumer credentials
+curl -i -X POST http://localhost:8001/consumers/user/basic-auth \
+--data "username=user" \
+--data "password=user"
+```
+
+</td>
+</tr>
+</table>
+
+### Test it !
+
+<table>
+<tr>
+<th> Original API </th>
+<th> Proxy API </th>
+</tr>
+<tr>
+<td>
+
+```sh
+# Legacy
+
+
+curl –i --location --request GET 'http://localhost:52773/crud/persons/all' \
+--header 'Authorization:Basic dXNlcjp1c2Vy'
+
+
+```
+
+</td>
+<td>
+
+```sh
+# KONG
+
+curl –i --location --request GET 'http://localhost:8000/persons/all' \
+--header 'Authorization:Basic dXNlcjp1c2Vy'
+
+
+```
+
+</td>
+</tr>
+</table>
