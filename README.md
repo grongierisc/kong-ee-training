@@ -196,7 +196,7 @@ Update the docker-compose file to :
 
 Add this part to the end of the docker-compose file.
 
-```docker-compose
+```yml
   iam-migrations:
     image: intersystems/iam:1.5.0.9-4
     command: kong migrations bootstrap up
@@ -299,7 +299,7 @@ For ease of use (and may be security), you can use the .env file in the IRIS doc
 
 To do so, edit the docker-compose with this in the iris service part :
 
-```docker-compose
+```yml
     build: 
       context: .
       dockerfile: dockerfile
@@ -319,3 +319,195 @@ RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/ch
 ```sh
 docker-compose -f "docker-compose.yml" up -d --build
 ```
+
+## First Service/Route/Plugin
+
+Remember how Kong/IAM works ?
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/KongEEvsOSS.png)
+
+Here, we will build :
+* a service
+  * for our crud API
+* a route
+  * to acccess this service
+
+### Create a service
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/create_service.png)
+
+</td>
+<td>
+
+```sh
+# Create service
+
+curl -i -X POST \
+--url http://localhost:8001/services/ \
+--data 'name=crud' \
+--data 'url=http://iris:52773/crud/'
+```
+
+</td>
+</tr>
+</table>
+
+What do we see here, to create a service we simple need it's url.
+
+### Create a route
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/create_route.png)
+
+</td>
+<td>
+
+```sh
+# Create route
+
+curl -i -X POST \
+--url http://localhost:8001/services/crud/routes \
+--data 'name=crud-route' \
+--data 'paths=/persons/*' \
+--data 'strip_path=false'
+```
+
+</td>
+</tr>
+</table>
+
+What do we see here, to create a route we need :
+* it's service name
+* a path where wildcard is allowed event RegEx
+
+### Test it !
+
+<table>
+<tr>
+<th> Original API </th>
+<th> Proxy API </th>
+</tr>
+<tr>
+<td>
+
+```sh
+# Legacy
+
+
+curl –i --location --request GET 'http://localhost:52773/crud/persons/all' \
+--header 'Authorization: Basic U3VwZXJVc2VyOlNZUw=='
+
+```
+
+</td>
+<td>
+
+```sh
+# KONG
+
+
+curl –i --location --request GET 'http://localhost:8000/persons/all' \
+--header 'Authorization: Basic U3VwZXJVc2VyOlNZUw=='
+
+```
+
+</td>
+</tr>
+</table>
+
+What do we see here :
+* Nothing new on legacy side.
+* On kong side :
+  * We change the port
+  * The path correspond to the route
+  * We still need to authenticate
+
+### Go futher
+
+To go futher, we will try to auto-authenticate Kong to the IRIS endpoint.
+
+To do so, we will use and plugin, resquest-transformer.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/auto_authenticate.png)
+
+#### Add a plugin to the service
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/service_plugin.png)
+
+</td>
+<td>
+
+```sh
+# Create plugin
+curl -i -X POST \
+--url http://localhost:8001/services/crud/plugins \
+--data 'name=request-transformer' \
+--data 'config.add.headers=Authorization:Basic U3VwZXJVc2VyOlNZUw==' \
+--data 'config.replace.headers=Authorization:Basic U3VwZXJVc2VyOlNZUw=='
+```
+
+</td>
+</tr>
+</table>
+
+#### Test it !
+
+<table>
+<tr>
+<th> Original API </th>
+<th> Proxy API </th>
+</tr>
+<tr>
+<td>
+
+```sh
+# Legacy
+
+
+curl –i --location --request GET 'http://localhost:52773/crud/persons/all' 
+
+
+```
+
+</td>
+<td>
+
+```sh
+# KONG
+
+
+curl –i --location --request GET 'http://localhost:8000/persons/all' 
+
+
+```
+
+</td>
+</tr>
+</table>
+
+What do we see here :
+* Error 401 on lecay
+* We reatch the data without authentification
