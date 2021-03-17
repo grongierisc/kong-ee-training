@@ -34,13 +34,13 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [6.5. Test it !](#65-test-it-)
 - [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
   - [7.1. Correction](#71-correction)
-- [Dev Portal](#dev-portal)
-  - [Overview](#overview)
-  - [Enable it !](#enable-it-)
-  - [Add your first spec](#add-your-first-spec)
-  - [Test it !](#test-it-)
-  - [Excercice](#excercice)
-    - [Solution](#solution)
+- [8. Dev Portal](#8-dev-portal)
+  - [8.1. Overview](#81-overview)
+  - [8.2. Enable it !](#82-enable-it-)
+  - [8.3. Add your first spec](#83-add-your-first-spec)
+  - [8.4. Test it !](#84-test-it-)
+  - [8.5. Excercice](#85-excercice)
+    - [8.5.1. Solution](#851-solution)
 
 # 2. Introduction
 
@@ -786,9 +786,9 @@ curl -i -X POST \
 </tr>
 </table>
 
-# Dev Portal
+# 8. Dev Portal
 
-## Overview
+## 8.1. Overview
 
 The Kong Developer Portal provides :
 * a single source of truth for all developers
@@ -798,7 +798,7 @@ The Kong Developer Portal provides :
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal.png)
 
-## Enable it !
+## 8.2. Enable it !
 
 <table>
 <tr>
@@ -821,7 +821,7 @@ curl -X PATCH http://localhost:8001/workspaces/default --data "config.portal=tru
 </tr>
 </table>
 
-## Add your first spec
+## 8.3. Add your first spec
 
 <table>
 <tr>
@@ -849,7 +849,7 @@ curl -X POST http://localhost:8001/default/files -F "path=specs/iam-training.yml
 </tr>
 </table>
 
-## Test it !
+## 8.4. Test it !
 
 ```url
 http://localhost:8003/default/documentation/iam-training
@@ -859,11 +859,11 @@ What happen ?
 
 How-to solve it ?
 
-## Excercice
+## 8.5. Excercice
 
 1. Add CORS plugin on route
 
-### Solution
+### 8.5.1. Solution
 
 <table>
 <tr>
