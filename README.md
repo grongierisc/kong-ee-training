@@ -38,6 +38,9 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [Overview](#overview)
   - [Enable it !](#enable-it-)
   - [Add your first spec](#add-your-first-spec)
+  - [Test it !](#test-it-)
+  - [Excercice](#excercice)
+    - [Solution](#solution)
 
 # 2. Introduction
 
@@ -827,19 +830,62 @@ curl -X PATCH http://localhost:8001/workspaces/default --data "config.portal=tru
 </tr>
 <tr>
 <td>
-<tr>
+
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor.png)
-</tr>
-<tr>
+
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor_ui.png)
-</tr>
+
+
 </td>
 <td>
 
 ```sh
 curl -X POST http://localhost:8001/default/files -F "path=specs/iam-training.yml" -F "contents=@misc/spec.yml"
+```
+
+</td>
+</tr>
+</table>
+
+## Test it !
+
+```url
+http://localhost:8003/default/documentation/iam-training
+```
+
+What happen ? 
+
+How-to solve it ?
+
+## Excercice
+
+1. Add CORS plugin on route
+
+### Solution
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/cors_route.png)
+
+
+</td>
+<td>
+
+```sh
+# Enable CORS
+
+curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
+--data "name=cors"
+
 ```
 
 </td>
