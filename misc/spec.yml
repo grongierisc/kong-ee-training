@@ -1,0 +1,140 @@
+swagger: "2.0"
+info:
+  title: InterSystems IRIS REST CRUD demo
+  description: 'Demo of a simple rest API on IRIS'
+  version: '0.1'
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: 'localhost:8000'
+basePath: /
+schemes:
+  - http
+securityDefinitions:
+  basicAuth:
+    type: basic
+# To apply Basic auth to the whole API:
+security:
+  - basicAuth: []
+paths:
+  /:
+    get:
+      description: ' PersonsREST general information '
+      summary: ' Server Info '
+      operationId: GetInfo
+      x-ISC_CORS: true
+      x-ISC_ServiceMethod: GetInfo
+      responses:
+        '200':
+          description: (Expected Result)
+          schema:
+            type: "object"
+            properties:
+              version:
+                type: "string"
+        default:
+          description: (Unexpected Error)
+  /persons/all:
+    get:
+      description: ' Retreive all the records of Sample.Person '
+      summary: ' Get all records of Person class '
+      operationId: GetAllPersons
+      x-ISC_ServiceMethod: GetAllPersons
+      responses:
+        '200':
+          description: (Expected Result)
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Person"
+        default:
+          description: (Unexpected Error)
+  '/persons/{id}':
+    get:
+      description: ' Return one record fo Sample.Person '
+      summary: ' GET method to return JSON for a given person id'
+      operationId: GetPerson
+      x-ISC_ServiceMethod: GetPerson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: (Expected Result)
+          schema:
+            $ref: "#/definitions/Person"
+        default:
+          description: (Unexpected Error)
+    put:
+      description: ' Update a record in Sample.Person with id '
+      summary: ' Update a person with id'
+      operationId: UpdatePerson
+      x-ISC_ServiceMethod: UpdatePerson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: payloadBody
+          in: body
+          description: Request body contents
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: (Expected Result)
+        default:
+          description: (Unexpected Error)
+    delete:
+      description: ' Delete a record with id in Sample.Person '
+      summary: ' Delete a person with id'
+      operationId: DeletePerson
+      x-ISC_ServiceMethod: DeletePerson
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: (Expected Result)
+        default:
+          description: (Unexpected Error)
+  /persons/:
+    post:
+      description: ' Creates a new Sample.Person record '
+      summary: ' Create a person'
+      operationId: CreatePerson
+      x-ISC_ServiceMethod: CreatePerson
+      parameters:
+        - name: payloadBody
+          in: body
+          description: Request body contents
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: (Expected Result)
+        default:
+          description: (Unexpected Error)
+definitions:
+  Person:
+    type: "object"
+    properties:
+      Name:
+        type: "string"
+      Title:
+        type: "string"
+      Company:
+        type: "string"
+      Phone:
+        type: "string"
+      DOB:
+        type: "string"
+        format: "date-time"
