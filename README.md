@@ -687,3 +687,65 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </td>
 </tr>
 </table>
+
+### Exercices
+
+1. Enable Unauthenticated user
+2. Limite rate by 2 calls per minutes to Unauthenticated user
+
+### Correction
+
+1. Enable Unauthenticated user
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/acl_anonymous.png)
+
+</td>
+<td>
+
+```sh
+# Add consumer group
+
+curl -i -X POST \
+--url http://localhost:8001/consumers/anonymous/acls \
+--data "group=user"
+```
+
+</td>
+</tr>
+</table>
+
+2. Limite rate by 2 calls per minutes to Unauthenticated user
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/rate_limite_user.png)
+
+</td>
+<td>
+
+```sh
+# Add rate limite consumer
+curl -i -X POST \
+--url http://localhost:8001/consumers/anonymous/plugins \
+--data "name=rate-limiting" \
+--data "config.limit_by=consumer" \
+--data "config.minute=2"
+```
+
+</td>
+</tr>
+</table>
