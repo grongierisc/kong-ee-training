@@ -19,13 +19,13 @@ This mean you have acces on top of Kong OpenSource edition to :
   * Caching
   * ...
 
-![alt](https://github.com/grongierisc/iam-training/misc/img/KongEEvsOSS.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/KongEEvsOSS.png)
 
 ## What is an API Managment ?
 
 API management is the process of creating and publishing web application programming interfaces (APIs), enforcing their usage policies, controlling access, nurturing the subscriber community, collecting and analyzing usage statistics, and reporting on performance. API Management components provide mechanisms and tools to support developer and subscriber community.
 
-![alt](https://github.com/grongierisc/iam-training/misc/img/Api_Managment.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/Api_Managment.png)
 
 ## IAM Portal
 
@@ -41,12 +41,12 @@ During this training all example / exercice will present both this way :
 <tr>
 <td>
 
-![alt](https://github.com/grongierisc/iam-training/misc/img/default_kong.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/default_kong.png)
 
 </td>
 <td>
 
-![alt](https://github.com/grongierisc/iam-training/misc/img/rest_call.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/rest_call.png)
 
 </td>
 </tr>
