@@ -828,9 +828,11 @@ curl -X PATCH http://localhost:8001/workspaces/default --data "config.portal=tru
 <tr>
 <td>
 <tr>
+
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor.png)
 </tr>
 <tr>
+
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor_ui.png)
 </tr>
 </td>
