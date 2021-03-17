@@ -32,8 +32,8 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [6.3. Add ACL Plugin](#63-add-acl-plugin)
   - [6.4. Configure USER with ACL and credentials](#64-configure-user-with-acl-and-credentials)
   - [6.5. Test it !](#65-test-it-)
-  - [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
-    - [7.1. Solution](#71-solution)
+- [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
+  - [7.1. Solution](#71-solution)
 - [8. Dev Portal](#8-dev-portal)
   - [8.1. Overview](#81-overview)
   - [8.2. Enable it !](#82-enable-it-)
@@ -41,6 +41,11 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [8.4. Test it !](#84-test-it-)
   - [8.5. Excercice](#85-excercice)
     - [8.5.1. Solution](#851-solution)
+- [8. Dev Portal, Part two, Authentification](#8-dev-portal-part-two-authentification)
+  - [Enable Basic Auth](#enable-basic-auth)
+  - [Limit access](#limit-access)
+    - [Create a role](#create-a-role)
+    - [Add role to Spec](#add-role-to-spec)
 
 # 2. Introduction
 
@@ -724,12 +729,12 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </tr>
 </table>
 
-## 7. Exercice, Rate-Limiting
+# 7. Exercice, Rate-Limiting
 
 1. Enable Unauthenticated user
 2. Limite rate by 2 calls per minutes to Unauthenticated user
 
-### 7.1. Solution
+## 7.1. Solution
 
 1. Enable Unauthenticated user
 
@@ -891,3 +896,110 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </td>
 </tr>
 </table>
+
+# 8. Dev Portal, Part two, Authentification
+
+## Enable Basic Auth
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Session Config (JSON) </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal_basic.png)
+
+
+</td>
+<td>
+
+```json
+{
+    "cookie_secure": false,
+    "cookie_name": "portal_session",
+    "secret": "SYS",
+    "storage": "kong"
+}
+```
+</td>
+</tr>
+</table>
+
+Now authentification is enable for the dev portal.
+
+## Limit access
+
+By default, all is accessible for unauthenticated user.
+
+We can create role to limit some access.
+
+For example, let restrict access to our CRUD API documentation.
+
+### Create a role
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal_role.png)
+
+
+</td>
+<td>
+
+```sh
+# Enable role
+
+curl -i -X POST http://localhost:8001/default/developers/roles \
+--data "name=dev"
+
+```
+
+</td>
+</tr>
+</table>
+
+### Add role to Spec
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal_acl.png)
+
+
+</td>
+<td>
+
+```sh
+# Enable role
+
+curl 'http://localhost:8001/default/files/specs/iam-training.yml' -X PATCH -H 'Accept: application/json, text/plain, */*'  --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Origin: http://localhost:8002' -H 'Referer: http://localhost:8002/default/portal/permissions/' --data-raw $'{"contents":"x-headmatter:\\n  readable_by:\\n    - dev\\nswagger: \'2.0\'\\ninfo:\\n  title: InterSystems IRIS REST CRUD demo\\n  description: Demo of a simple rest API on IRIS\\n  version: \'0.1\'\\n  contact:\\n    email: apiteam@swagger.io\\n  license:\\n    name: Apache 2.0\\n    url: \'http://www.apache.org/licenses/LICENSE-2.0.html\'\\nhost: \'localhost:8000\'\\nbasePath: /\\nschemes:\\n  - http\\nsecurityDefinitions:\\n  basicAuth:\\n    type: basic\\nsecurity:\\n  - basicAuth: []\\npaths:\\n  /:\\n    get:\\n      description: \' PersonsREST general information \'\\n      summary: \' Server Info \'\\n      operationId: GetInfo\\n      x-ISC_CORS: true\\n      x-ISC_ServiceMethod: GetInfo\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n          schema:\\n            type: object\\n            properties:\\n              version:\\n                type: string\\n        default:\\n          description: (Unexpected Error)\\n  /persons/all:\\n    get:\\n      description: \' Retreive all the records of Sample.Person \'\\n      summary: \' Get all records of Person class \'\\n      operationId: GetAllPersons\\n      x-ISC_ServiceMethod: GetAllPersons\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n          schema:\\n            type: array\\n            items:\\n              $ref: \'#/definitions/Person\'\\n        default:\\n          description: (Unexpected Error)\\n  \'/persons/{id}\':\\n    get:\\n      description: \' Return one record fo Sample.Person \'\\n      summary: \' GET method to return JSON for a given person id\'\\n      operationId: GetPerson\\n      x-ISC_ServiceMethod: GetPerson\\n      parameters:\\n        - name: id\\n          in: path\\n          required: true\\n          type: string\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n          schema:\\n            $ref: \'#/definitions/Person\'\\n        default:\\n          description: (Unexpected Error)\\n    put:\\n      description: \' Update a record in Sample.Person with id \'\\n      summary: \' Update a person with id\'\\n      operationId: UpdatePerson\\n      x-ISC_ServiceMethod: UpdatePerson\\n      parameters:\\n        - name: id\\n          in: path\\n          required: true\\n          type: string\\n        - name: payloadBody\\n          in: body\\n          description: Request body contents\\n          required: false\\n          schema:\\n            type: string\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n        default:\\n          description: (Unexpected Error)\\n    delete:\\n      description: \' Delete a record with id in Sample.Person \'\\n      summary: \' Delete a person with id\'\\n      operationId: DeletePerson\\n      x-ISC_ServiceMethod: DeletePerson\\n      parameters:\\n        - name: id\\n          in: path\\n          required: true\\n          type: string\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n        default:\\n          description: (Unexpected Error)\\n  /persons/:\\n    post:\\n      description: \' Creates a new Sample.Person record \'\\n      summary: \' Create a person\'\\n      operationId: CreatePerson\\n      x-ISC_ServiceMethod: CreatePerson\\n      parameters:\\n        - name: payloadBody\\n          in: body\\n          description: Request body contents\\n          required: false\\n          schema:\\n            type: string\\n      responses:\\n        \'200\':\\n          description: (Expected Result)\\n        default:\\n          description: (Unexpected Error)\\ndefinitions:\\n  Person:\\n    type: object\\n    properties:\\n      Name:\\n        type: string\\n      Title:\\n        type: string\\n      Company:\\n        type: string\\n      Phone:\\n        type: string\\n      DOB:\\n        type: string\\n        format: date-time\\n"}'
+
+```
+
+</td>
+</tr>
+</table>
+
+What's important here is this part :
+
+```
+contents":"x-headmatter:\\n  readable_by:\\n    - dev
+```
+Refere to this documentation : 
+[POST](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
+
