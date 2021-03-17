@@ -19,21 +19,21 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [3.4.4. Update the docker-compose](#344-update-the-docker-compose)
     - [3.4.5. Option :](#345-option-)
     - [3.4.6. Test it !](#346-test-it-)
-  - [3.5. First Service/Route/Plugin](#35-first-servicerouteplugin)
-    - [3.5.1. Create a service](#351-create-a-service)
-    - [3.5.2. Create a route](#352-create-a-route)
-    - [3.5.3. Test it !](#353-test-it-)
-  - [3.6. Second, Go futher with plugin](#36-second-go-futher-with-plugin)
-    - [3.6.1. Add a plugin to the service](#361-add-a-plugin-to-the-service)
-    - [3.6.2. Test it !](#362-test-it-)
-  - [3.7. Third, add our own authentication](#37-third-add-our-own-authentication)
-    - [3.7.1. Add consumers](#371-add-consumers)
-  - [3.8. Add Basic auth plugin](#38-add-basic-auth-plugin)
-    - [3.8.1. Add ACL Plugin](#381-add-acl-plugin)
-    - [3.8.2. Configure USER with ACL and credentials](#382-configure-user-with-acl-and-credentials)
-    - [3.8.3. Test it !](#383-test-it-)
-    - [3.8.4. Exercices](#384-exercices)
-    - [3.8.5. Correction](#385-correction)
+- [4. First Service/Route/Plugin](#4-first-servicerouteplugin)
+  - [4.1. Create a service](#41-create-a-service)
+  - [4.2. Create a route](#42-create-a-route)
+  - [4.3. Test it !](#43-test-it-)
+- [5. Second, Go futher with plugin](#5-second-go-futher-with-plugin)
+  - [5.1. Add a plugin to the service](#51-add-a-plugin-to-the-service)
+  - [5.2. Test it !](#52-test-it-)
+- [6. Third, add our own authentication](#6-third-add-our-own-authentication)
+  - [6.1. Add consumers](#61-add-consumers)
+  - [6.2. Add Basic auth plugin](#62-add-basic-auth-plugin)
+  - [6.3. Add ACL Plugin](#63-add-acl-plugin)
+  - [6.4. Configure USER with ACL and credentials](#64-configure-user-with-acl-and-credentials)
+  - [6.5. Test it !](#65-test-it-)
+- [7. Exercices](#7-exercices)
+  - [7.1. Correction](#71-correction)
 
 # 2. Introduction
 
@@ -349,7 +349,7 @@ RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/ch
 docker-compose -f "docker-compose.yml" up -d --build
 ```
 
-## 3.5. First Service/Route/Plugin
+# 4. First Service/Route/Plugin
 
 Remember how Kong/IAM works ?
 
@@ -361,7 +361,7 @@ Here, we will build :
 * a route
   * to acccess this service
 
-### 3.5.1. Create a service
+## 4.1. Create a service
 
 <table>
 <tr>
@@ -391,7 +391,7 @@ curl -i -X POST \
 
 What do we see here, to create a service we simply need it's url.
 
-### 3.5.2. Create a route
+## 4.2. Create a route
 
 <table>
 <tr>
@@ -424,7 +424,7 @@ What do we see here, to create a route we need :
 * it's service name
 * a path where RegEx is allowed 
 
-### 3.5.3. Test it !
+## 4.3. Test it !
 
 <table>
 <tr>
@@ -466,7 +466,7 @@ What do we see here :
   * The path correspond to the route
   * We still need to authenticate
 
-## 3.6. Second, Go futher with plugin
+# 5. Second, Go futher with plugin
 
 To go futher, we will try to auto-authenticate Kong to the IRIS endpoint.
 
@@ -474,7 +474,7 @@ To do so, we will use and plugin, resquest-transformer.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/auto_authenticate.png)
 
-### 3.6.1. Add a plugin to the service
+## 5.1. Add a plugin to the service
 
 <table>
 <tr>
@@ -502,7 +502,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-### 3.6.2. Test it !
+## 5.2. Test it !
 
 <table>
 <tr>
@@ -542,13 +542,13 @@ What do we see here :
 * We reatch the data without authentification
 
 
-## 3.7. Third, add our own authentication
+# 6. Third, add our own authentication
 
 What we want to achived here is to add our own authentication without any distuption of the orignial API.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/custom_auth.png)
 
-### 3.7.1. Add consumers
+## 6.1. Add consumers
 
 <table>
 <tr>
@@ -593,7 +593,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-## 3.8. Add Basic auth plugin
+## 6.2. Add Basic auth plugin
 
 <table>
 <tr>
@@ -623,7 +623,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 Where :
 * config.anonymous = uuid of anonymous consumer
 
-### 3.8.1. Add ACL Plugin
+## 6.3. Add ACL Plugin
 
 <table>
 <tr>
@@ -650,7 +650,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </tr>
 </table>
 
-### 3.8.2. Configure USER with ACL and credentials
+## 6.4. Configure USER with ACL and credentials
 
 
 <table>
@@ -681,7 +681,7 @@ curl -i -X POST http://localhost:8001/consumers/user/basic-auth \
 </tr>
 </table>
 
-### 3.8.3. Test it !
+## 6.5. Test it !
 
 <table>
 <tr>
@@ -717,12 +717,12 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </tr>
 </table>
 
-### 3.8.4. Exercices
+# 7. Exercices
 
 1. Enable Unauthenticated user
 2. Limite rate by 2 calls per minutes to Unauthenticated user
 
-### 3.8.5. Correction
+## 7.1. Correction
 
 1. Enable Unauthenticated user
 
