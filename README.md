@@ -19,7 +19,7 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [3.4.4. Update the docker-compose](#344-update-the-docker-compose)
     - [3.4.5. Option :](#345-option-)
     - [3.4.6. Test it !](#346-test-it-)
-- [4. First Service/Route/Plugin](#4-first-servicerouteplugin)
+- [4. First Service/Route](#4-first-serviceroute)
   - [4.1. Create a service](#41-create-a-service)
   - [4.2. Create a route](#42-create-a-route)
   - [4.3. Test it !](#43-test-it-)
@@ -32,8 +32,12 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [6.3. Add ACL Plugin](#63-add-acl-plugin)
   - [6.4. Configure USER with ACL and credentials](#64-configure-user-with-acl-and-credentials)
   - [6.5. Test it !](#65-test-it-)
-- [7. Exercices](#7-exercices)
+- [7. Exercice, Rate-Limiting](#7-exercice-rate-limiting)
   - [7.1. Correction](#71-correction)
+- [Dev Portal](#dev-portal)
+  - [Overview](#overview)
+  - [Enable it !](#enable-it-)
+  - [Add your first spec](#add-your-first-spec)
 
 # 2. Introduction
 
@@ -349,7 +353,7 @@ RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/ch
 docker-compose -f "docker-compose.yml" up -d --build
 ```
 
-# 4. First Service/Route/Plugin
+# 4. First Service/Route
 
 Remember how Kong/IAM works ?
 
@@ -717,7 +721,7 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 </tr>
 </table>
 
-# 7. Exercices
+# 7. Exercice, Rate-Limiting
 
 1. Enable Unauthenticated user
 2. Limite rate by 2 calls per minutes to Unauthenticated user
@@ -773,6 +777,67 @@ curl -i -X POST \
 --data "name=rate-limiting" \
 --data "config.limit_by=consumer" \
 --data "config.minute=2"
+```
+
+</td>
+</tr>
+</table>
+
+# Dev Portal
+
+## Overview
+
+The Kong Developer Portal provides :
+* a single source of truth for all developers
+* intuitive content management for documentation
+* streamlined developer onboarding
+* role-based access control (RBAC)
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal.png)
+
+## Enable it !
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal_enable.png)
+
+</td>
+<td>
+
+```sh
+curl -X PATCH http://localhost:8001/workspaces/default --data "config.portal=true"
+```
+
+</td>
+</tr>
+</table>
+
+## Add your first spec
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+<tr>
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor.png)
+</tr>
+<tr>
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/portal_editor_ui.png)
+</tr>
+</td>
+<td>
+
+```sh
+curl -X POST http://localhost:8001/default/files -F "path=specs/iam-training.yml" -F "contents=@misc/spec.yml"
 ```
 
 </td>
