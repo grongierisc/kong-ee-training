@@ -10,7 +10,8 @@ This repository contains the materials, examples, excercices to learn the basic 
 
 ## What is IAM ? 
 
-IAM stand for InterSystems API Manager, it's based on Kong Entreprise Edition.
+IAM stand for InterSystems API Manager, it's based on **Kong Entreprise Edition**.
+
 This mean you have acces on top of Kong OpenSource edition to :
 * Manager Protal
 * Developer Portal 
@@ -29,7 +30,7 @@ API management is the process of creating and publishing web application program
 
 ## IAM Portal
 
-Kong and IAM are design as API first, this mean, every thing does in Kong/IAM can be done by rest calls or the manager portal.
+Kong and IAM are design as API first, this mean, every thing done in Kong/IAM can be done by rest calls or the manager portal.
 
 During this training all example / exercice will present both this way :
 
@@ -67,6 +68,7 @@ https://github.com/grongierisc/iam-training/blob/training/misc/spec.yml
 ```
 
 Start this training with the main branch.
+
 At the end of the training you should have the same result as the training branch.
 # Installation
 ## What do you need to install? 
@@ -80,7 +82,9 @@ At the end of the training you should have the same result as the training branc
 ## How IAM work's with IRIS
 
 At Kong/IAM start, the container check for the Kong/IAM license with a curl call.
+
 The endpoint of this call is a rest API on the IRIS container.
+
 FYI : Kong license is embedded in IRIS one.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/IAM_IRIS.png)
@@ -109,7 +113,7 @@ SuperUser/SYS
 
 ## Install IAM
 
-### Iris Iamge
+### Iris Image
 
 First you need to swith for the community edition to an licensed one.
 
@@ -138,25 +142,33 @@ docker load -i iam_image.tar
 
 Change IRIS community edition to a licensed one.
 * containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
-* Add iris.key in key folder
+* add iris.key in key folder
 
 Edit the dockerfile to add on top of it this part
 ```dockerfile
 ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
+# Frist stage
 FROM $IMAGE as iris-iam
 COPY key/iris.key /usr/irissys/mgr/iris.key
 COPY iris-iam.script /tmp/iris-iam.script
 RUN iris start IRIS \
 && iris session IRIS < /tmp/iris-iam.script \
 && iris stop IRIS quietly
+
+# Second stage
 FROM iris-iam
 ```
+
+This part will create a multi-stage dockerfile.
+
+* the first stage is to enable IRIS to serve IAM license.
+* the second stage is for the REST API build
 
 Create a new file iris-iam.script to build a new IRIS Image to enable IAM endpoint and user.
 
 ```objectscript
 zn "%SYS"
-wri"Create web application ...",!
+write "Create web application ...",!
 set webName = "/api/iam"
 set webProperties("Enabled") = 1
 set status = ##class(Security.Applications).Modify(webName, .webProperties)
@@ -275,3 +287,35 @@ volumes:
   pgdata:
 ```
 
+Add the .env file in root folder :
+
+```env
+IRIS_PASSWORD=SYS
+```
+
+### Option :
+
+For ease of use (and may be security), you can use the .env file in the IRIS dockerfile.
+
+To do so, edit the docker-compose with this in the iris service part :
+
+```docker-compose
+    build: 
+      context: .
+      dockerfile: dockerfile
+      args: 
+        - IRIS_PASSWORD=${IRIS_PASSWORD}
+```
+
+And the dockerfile (second or first stage of the build):
+
+```dockerfile
+ARG IRIS_PASSWORD
+RUN echo "${IRIS_PASSWORD}" > /tmp/password.txt && /usr/irissys/dev/Container/changePassword.sh /tmp/password.txt
+```
+
+### Test it !
+
+```sh
+docker-compose -f "docker-compose.yml" up -d --build
+```
