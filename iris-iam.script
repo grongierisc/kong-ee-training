@@ -5,6 +5,7 @@
     set status = ##class(Security.Applications).Modify(webName, .webProperties)
     write:'status $system.Status.DisplayError(status)
     write "Web application "_webName_" was updated!",!
+    
     set userProperties("Enabled") = 1
     set userName = "IAM"
     Do ##class(Security.Users).Modify(userName,.userProperties)
