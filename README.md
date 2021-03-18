@@ -702,7 +702,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 curl -i -X POST \
 --url http://localhost:8001/consumers/user/acls \
 --data "group=user"
-# Add consumer credentials
+# Add consumer credentials
 curl -i -X POST http://localhost:8001/consumers/user/basic-auth \
 --data "username=user" \
 --data "password=user"
@@ -1409,3 +1409,48 @@ curl -i -X POST \
 
 Now we are set. The real use of jwt-crafter.
 
+```bash
+# Create sign in API
+## First the service
+curl -i -X POST \
+--url http://localhost:8001/services/ \
+--data 'name=jwt-crafter' \
+--data 'url=http://notused'
+
+## Second the route
+curl -i -X POST \
+--url http://localhost:8001/services/jwt-crafter/routes \
+--data 'name=jwt-crafter-route' \
+--data 'paths=/sign_in' \
+--data 'strip_path=false'
+
+# Create consumer
+# Add consumer user
+curl -i -X POST \
+--url http://localhost:8001/consumers/ \
+--data "username=test" \
+--data "custom_id=test"
+
+# Create JWT credential for consumer
+## Add plugin
+curl 'http://localhost:8001/default/plugins' --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Cache-Control: no-cache' -H 'Origin: http://localhost:8002' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: http://localhost:8002/default/plugins/select/jwt' -H 'Pragma: no-cache' --data-raw '{"enabled":true,"name":"jwt","config":{"cookie_names":[],"header_names":["authorization"],"key_claim_name":"iss","maximum_expiration":0,"run_on_preflight":true,"secret_is_base64":false,"uri_param_names":["jwt"]}}'
+## Add jwt token to user
+curl -XPOST localhost:8001/consumers/test/jwt \
+--data "algorithm=HS256"
+
+# Create basic auth credentials for consumer
+curl -XPOST -d 'username=test' -d 'password=test' localhost:8001/consumers/test/basic-auth
+
+# Enable basic auth for sign in API
+curl -XPOST -d 'name=basic-auth' localhost:8001/services/jwt-crafter/plugins
+
+# Enable jwt-crafter plugin
+curl -X POST -d 'name=jwt-crafter' localhost:8001/services/jwt-crafter/plugins
+```
+
+Test it !
+
+```bash
+# user:pass is base64 encoded
+curl -H 'Authorization: basic dGVzdDp0ZXN0' localhost:8000/sign_in
+```
