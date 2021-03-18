@@ -28,7 +28,7 @@ services:
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-iam}
       KONG_PG_USER: ${KONG_PG_USER:-iam}
       KONG_CASSANDRA_CONTACT_POINTS: db
-      KONG_PLUGINS: bundled,jwt-crafter
+      KONG_PLUGINS: bundled
       ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@iris:52773/api/iam/license
     restart: on-failure
     links:
@@ -57,7 +57,9 @@ services:
       KONG_PORTAL_GUI_PROTOCOL: http
       KONG_PORTAL_GUI_HOST: '127.0.0.1:8003'
       KONG_ADMIN_GUI_URL: http://localhost:8002
-      KONG_PLUGINS: bundled,helloworld
+      KONG_ENFORCE_RBAC: 'on'
+      KONG_ADMIN_GUI_AUTH: 'basic-auth'
+      KONG_ADMIN_GUI_SESSION_CONF: '{"secret":"${IRIS_PASSWORD}","storage":"kong","cookie_secure":false}'
       ISC_IRIS_URL: IAM:${IRIS_PASSWORD}@iris:52773/api/iam/license
     volumes: 
       - ./iam:/iam

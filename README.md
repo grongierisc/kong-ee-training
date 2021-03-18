@@ -17,7 +17,7 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [3.4.2. IAM Image](#342-iam-image)
     - [3.4.3. Update the docker file](#343-update-the-docker-file)
     - [3.4.4. Update the docker-compose](#344-update-the-docker-compose)
-    - [3.4.5. Option :](#345-option-)
+    - [3.4.5. Option : add IRIS_PASSWARD as .env](#345-option--add-iris_passward-as-env)
     - [3.4.6. Test it !](#346-test-it-)
 - [4. First Service/Route](#4-first-serviceroute)
   - [4.1. Create a service](#41-create-a-service)
@@ -55,6 +55,11 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [9.3.2. Second, add application-registration plugin](#932-second-add-application-registration-plugin)
     - [9.3.3. Link service and documentation](#933-link-service-and-documentation)
       - [9.3.3.1. Test it !](#9331-test-it-)
+- [Secure Management Portal](#secure-management-portal)
+  - [Create an admin](#create-an-admin)
+  - [Enable Basic Auth for Kong Manager](#enable-basic-auth-for-kong-manager)
+  - [Use Kong Admin API with RBAC](#use-kong-admin-api-with-rbac)
+    - [Create and admin user with a token](#create-and-admin-user-with-a-token)
 
 # 2. Introduction
 
@@ -343,7 +348,7 @@ Add the .env file in root folder :
 IRIS_PASSWORD=SYS
 ```
 
-### 3.4.5. Option :
+### 3.4.5. Option : add IRIS_PASSWARD as .env
 
 For ease of use (and may be security), you can use the .env file in the IRIS dockerfile.
 
@@ -1153,4 +1158,78 @@ Use token :
 ```sh
 curl --insecure -X GET https://localhost:8443/persons/all \
   --header "authorization: Bearer u5guWaYR3BjZ1KdwuBSC6C7udCYxj5vK"
+```
+
+# Secure Management Portal
+
+## Create an admin
+
+As we haved bootstrap Kong without a seed password.
+
+We have to create an admin before enforcing RBAC.
+
+To do so: 
+* Go to Teams
+* Invite admin
+  * Set Mail
+  * Set Username
+    * Set role to super admin
+  * Invite
+* Go to Invited Admin
+* View
+* Generate link
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/invite_admin.gif)
+
+## Enable Basic Auth for Kong Manager
+
+To enable this feature, we have to change the docker-compose file.
+
+Add this to the iam service, environement
+
+```yml
+      KONG_ENFORCE_RBAC: 'on'
+      KONG_ADMIN_GUI_AUTH: 'basic-auth'
+      KONG_ADMIN_GUI_SESSION_CONF: '{"secret":"${IRIS_PASSWORD}","storage":"kong","cookie_secure":false}'
+```
+
+Restart the container
+
+```sh
+docker-compose down && docker-compose up -d
+```
+
+Go to the invited admin link :
+
+```url
+http://localhost:8002/register?email=test.test%40gmail.com&username=admin&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTYzMzYzNzEsImlkIjoiY2JiZGE5Y2UtODQ3NS00MmM2LTk4ZjItNDgwZTI4MjQ4NWNkIn0.sFeOc_5UPIr3MdlQrgyGvmvIjRFvSn3nQjo2ph8GrJA
+```
+## Use Kong Admin API with RBAC
+
+As RBAC is set, we can't use kong admin api anymore :
+
+```sh
+curl -s -X GET \
+  --url http://localhost:8001/routes
+```
+
+Get this error :
+
+```json
+{"message":"Invalid credentials. Token or User credentials required"}
+```
+
+### Create and admin user with a token
+
+* Go to Teams
+* RBAC Users
+* Add new user
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/user_rbac.png)
+
+
+```sh
+curl -s -X GET \
+  --url http://localhost:8001/routes \
+  --header "Kong-Admin-Token: SYS"
 ```
