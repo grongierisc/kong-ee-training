@@ -1006,10 +1006,4 @@ Refere to this documentation :
 
 ### Register a new developer
 
-<video controls>
-  <source src="https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.mp4" type="video/mp4">
-</video>
-
-<video src="https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.mp4" data-canonical-src="https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.mp4" controls="controls" muted="muted" class="d-block rounded-bottom-2 width-fit" style="max-height:640px;">
-
-  </video>
+![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.gif)
