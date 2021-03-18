@@ -41,20 +41,20 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [8.4. Test it !](#84-test-it-)
   - [8.5. Excercice](#85-excercice)
     - [8.5.1. Solution](#851-solution)
-- [8. Dev Portal, Part two, Authentification](#8-dev-portal-part-two-authentification)
-  - [Enable Basic Auth](#enable-basic-auth)
-  - [Limit access](#limit-access)
-    - [Create a role](#create-a-role)
-    - [Add role to Spec](#add-role-to-spec)
-    - [Test it !](#test-it-)
-      - [Register a new developer](#register-a-new-developer)
-      - [Approve this developer](#approve-this-developer)
-      - [Add role for this developer](#add-role-for-this-developer)
-  - [Add Oauth2 for developer](#add-oauth2-for-developer)
-    - [First remove basic auth](#first-remove-basic-auth)
-    - [Second, add application-registration plugin](#second-add-application-registration-plugin)
-    - [Link service and documentation](#link-service-and-documentation)
-      - [Test it !](#test-it--1)
+- [9. Dev Portal, Part two, Authentification](#9-dev-portal-part-two-authentification)
+  - [9.1. Enable Basic Auth](#91-enable-basic-auth)
+  - [9.2. Limit access](#92-limit-access)
+    - [9.2.1. Create a role](#921-create-a-role)
+    - [9.2.2. Add role to Spec](#922-add-role-to-spec)
+    - [9.2.3. Test it !](#923-test-it-)
+      - [9.2.3.1. Register a new developer](#9231-register-a-new-developer)
+      - [9.2.3.2. Approve this developer](#9232-approve-this-developer)
+      - [9.2.3.3. Add role for this developer](#9233-add-role-for-this-developer)
+  - [9.3. Add Oauth2 for developer](#93-add-oauth2-for-developer)
+    - [9.3.1. First, remove basic auth](#931-first-remove-basic-auth)
+    - [9.3.2. Second, add application-registration plugin](#932-second-add-application-registration-plugin)
+    - [9.3.3. Link service and documentation](#933-link-service-and-documentation)
+      - [9.3.3.1. Test it !](#9331-test-it-)
 
 # 2. Introduction
 
@@ -906,9 +906,9 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </tr>
 </table>
 
-# 8. Dev Portal, Part two, Authentification
+# 9. Dev Portal, Part two, Authentification
 
-## Enable Basic Auth
+## 9.1. Enable Basic Auth
 
 <table>
 <tr>
@@ -939,7 +939,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 
 Now authentification is enable for the dev portal.
 
-## Limit access
+## 9.2. Limit access
 
 By default, all is accessible for unauthenticated user.
 
@@ -947,7 +947,7 @@ We can create role to limit some access.
 
 For example, let restrict access to our CRUD API documentation.
 
-### Create a role
+### 9.2.1. Create a role
 
 <table>
 <tr>
@@ -976,7 +976,7 @@ curl -i -X POST http://localhost:8001/default/developers/roles \
 </tr>
 </table>
 
-### Add role to Spec
+### 9.2.2. Add role to Spec
 
 <table>
 <tr>
@@ -1012,26 +1012,30 @@ contents":"x-headmatter:\\n  readable_by:\\n    - dev
 Refere to this documentation : 
 [readable_by attribute](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
 
-### Test it !
+### 9.2.3. Test it !
 
-#### Register a new developer
+#### 9.2.3.1. Register a new developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.gif)
 
-#### Approve this developer
+#### 9.2.3.2. Approve this developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/approve_new_dev.gif)
 
-#### Add role for this developer
+#### 9.2.3.3. Add role for this developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/add_role_dev.gif)
 
-## Add Oauth2 for developer
+```sh
+curl 'http://localhost:8001/default/developers/dev@dev.com' -X PATCH --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Cache-Control: no-cache' -H 'Origin: http://localhost:8002' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: http://localhost:8002/default/portal/permissions/dev/update' -H 'Pragma: no-cache' --data-raw '{"roles":["dev"]}'
+```
+
+## 9.3. Add Oauth2 for developer
 
 In this part we will add an Oauth2 authentification for developers to use securely our crud API.
 
 This flow will provide sefl regristation from developer and grant them access to the crud API.
-### First remove basic auth
+### 9.3.1. First, remove basic auth
 
 To do so, we will replace our basic auth to an bearToken one.
 
@@ -1063,7 +1067,7 @@ curl 'http://localhost:8001/default/routes/afefe836-b9be-49a8-927a-1324a8597a9c/
 </tr>
 </table>
 
-### Second, add application-registration plugin
+### 9.3.2. Second, add application-registration plugin
 
 <table>
 <tr>
@@ -1096,7 +1100,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-### Link service and documentation
+### 9.3.3. Link service and documentation
 
 <table>
 <tr>
@@ -1121,15 +1125,15 @@ curl 'http://localhost:8001/default/document_objects' --compressed -H 'Content-T
 </tr>
 </table>
 
-#### Test it !
+#### 9.3.3.1. Test it !
 
 From the dev portal logged as dev@dev.com, create a new application.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/add_app_dev.gif)
 
 This will give you client_id and client_secret.
 
 Thoses can be used in the swagger dev portal.
-
-![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/add_app_dev.gif)
 
 Register this application to the crud service :
 
