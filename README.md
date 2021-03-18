@@ -47,6 +47,7 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [Create a role](#create-a-role)
     - [Add role to Spec](#add-role-to-spec)
     - [Register a new developer](#register-a-new-developer)
+    - [Approve this developer](#approve-this-developer)
 
 # 2. Introduction
 
@@ -1007,3 +1008,7 @@ Refere to this documentation :
 ### Register a new developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.gif)
+
+### Approve this developer
+
+![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/approve_new_dev.gif)
