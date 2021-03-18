@@ -46,6 +46,7 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [Limit access](#limit-access)
     - [Create a role](#create-a-role)
     - [Add role to Spec](#add-role-to-spec)
+    - [Register a new developer](#register-a-new-developer)
 
 # 2. Introduction
 
@@ -1001,5 +1002,8 @@ What's important here is this part :
 contents":"x-headmatter:\\n  readable_by:\\n    - dev
 ```
 Refere to this documentation : 
-[POST](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
+[readable_by attribute](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
 
+### Register a new developer
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.mp4)
