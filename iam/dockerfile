@@ -4,5 +4,7 @@ USER root
 COPY ./plugins /custom/plugins
 
 RUN cd /custom/plugins/kong-plugin-helloworld && luarocks make
-#USER kong
+RUN cd /custom/plugins/kong-plugin-jwt-crafter && luarocks make
+
+USER kong
 

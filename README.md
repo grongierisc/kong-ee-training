@@ -60,6 +60,11 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [10.2. Enable Basic Auth for Kong Manager](#102-enable-basic-auth-for-kong-manager)
   - [10.3. Use Kong Admin API with RBAC](#103-use-kong-admin-api-with-rbac)
     - [10.3.1. Create and admin user with a token](#1031-create-and-admin-user-with-a-token)
+- [Plugins !](#plugins-)
+  - [Import a community plugin](#import-a-community-plugin)
+    - [Build a new Kong/IAM docker image with the community plugin](#build-a-new-kongiam-docker-image-with-the-community-plugin)
+    - [Test it !](#test-it-)
+      - [Use it !](#use-it-)
 
 # 2. Introduction
 
@@ -1233,3 +1238,174 @@ curl -s -X GET \
   --url http://localhost:8001/routes \
   --header "Kong-Admin-Token: SYS"
 ```
+
+# Plugins !
+
+Kong come with high quality plugins. 
+
+But, what if, we need plugin that are not embedded. If we want community plugins ?
+
+In this chapier we will talk about community plugins, how to import them. 
+
+Then, we will see how-to build our own plugin.
+
+## Import a community plugin
+
+For this part, we will be using the jwt-crafter plugin.
+
+This plugin adds the possibility to generate a JWT token within Kong itself, eliminating the need for a upstream service doing the token generation.
+
+Here is the plugin :
+```
+https://github.com/grongierisc/kong-plugin-jwt-crafter
+```
+
+To install this plugin, as we are using the docker version, we have to build a new image who embed the plugin.
+
+### Build a new Kong/IAM docker image with the community plugin
+
+1. Create a folder named iam at root of this git.
+2. Create a dockerfile in this new folder
+3. Create a folder named plugins
+   1. This is where we will add all our community plugins
+4. Update the docker-compose file to enable the new plug in
+
+In the plugins folder, git clone our community plugin.
+
+```sh
+git clone https://github.com/grongierisc/kong-plugin-jwt-crafter
+```
+
+The dockerfile should look like this: 
+
+```dockerfile
+FROM intersystems/iam:1.5.0.9-4
+
+USER root
+COPY ./plugins /custom/plugins
+
+RUN cd /custom/plugins/kong-plugin-jwt-crafter && luarocks make
+
+USER kong
+```
+
+What we see in this dockerfile ?
+
+Simply to install a communty plugin, we have to move to it's root folder (where the rockspec is) and call luarocks make. That's it. You have install the plugin.
+
+For the docker-compose part :
+
+1. Edit the iam iamge tag
+   1. intersystems/iam:1.5.0.9-4 -> intersystems/iam-custom:1.5.0.9-4
+2. Add a build context
+```yml
+    build: 
+      context: iam
+      dockerfile: dockerfile
+```
+3. Enable the plugin in the environment variables
+```yml
+KONG_PLUGINS: 'bundled,jwt-crafter'
+```
+
+Now build our new iam image :
+
+```sh
+docker-compose build iam
+```
+
+### Test it !
+
+```sh
+docker-compose up -d
+```
+
+If you go to plugin -> new, at the bottum of the list you should see the jwt-crafter plugin.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/jwt_crafter.png)
+
+#### Use it !
+
+1. Create a new service :
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/create_service.png)
+
+</td>
+<td>
+
+```sh
+# Create service
+
+curl -i -X POST \
+--url http://localhost:8001/services/ \
+--data 'name=crud-persons' \
+--data 'url=http://iris:52773/crud/persons/'
+```
+
+</td>
+</tr>
+</table>
+
+2. Create a route
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/create_route.png)
+
+</td>
+<td>
+
+```sh
+# Create route
+
+curl -i -X POST \
+--url http://localhost:8001/services/crud-persons/routes \
+--data 'name=crud-route-jwt' \
+--data 'paths=/crud/persons/*' \
+--data 'strip_path=true'
+```
+
+3. Re-use our auto-auth
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/service_plugin.png)
+
+</td>
+<td>
+
+```sh
+# Create plugin
+curl -i -X POST \
+--url http://localhost:8001/services/crud-persons/plugins \
+--data 'name=request-transformer' \
+--data 'config.add.headers=Authorization:Basic U3VwZXJVc2VyOlNZUw==' \
+--data 'config.replace.headers=Authorization:Basic U3VwZXJVc2VyOlNZUw=='
+```
+
+</td>
+</tr>
+</table>
+
+Now we are set. The real use of jwt-crafter.
+
