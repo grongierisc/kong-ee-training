@@ -55,11 +55,11 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [9.3.2. Second, add application-registration plugin](#932-second-add-application-registration-plugin)
     - [9.3.3. Link service and documentation](#933-link-service-and-documentation)
       - [9.3.3.1. Test it !](#9331-test-it-)
-- [Secure Management Portal](#secure-management-portal)
-  - [Create an admin](#create-an-admin)
-  - [Enable Basic Auth for Kong Manager](#enable-basic-auth-for-kong-manager)
-  - [Use Kong Admin API with RBAC](#use-kong-admin-api-with-rbac)
-    - [Create and admin user with a token](#create-and-admin-user-with-a-token)
+- [10. Secure Management Portal](#10-secure-management-portal)
+  - [10.1. Create an admin](#101-create-an-admin)
+  - [10.2. Enable Basic Auth for Kong Manager](#102-enable-basic-auth-for-kong-manager)
+  - [10.3. Use Kong Admin API with RBAC](#103-use-kong-admin-api-with-rbac)
+    - [10.3.1. Create and admin user with a token](#1031-create-and-admin-user-with-a-token)
 
 # 2. Introduction
 
@@ -1160,9 +1160,9 @@ curl --insecure -X GET https://localhost:8443/persons/all \
   --header "authorization: Bearer u5guWaYR3BjZ1KdwuBSC6C7udCYxj5vK"
 ```
 
-# Secure Management Portal
+# 10. Secure Management Portal
 
-## Create an admin
+## 10.1. Create an admin
 
 As we haved bootstrap Kong without a seed password.
 
@@ -1181,7 +1181,7 @@ To do so:
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/invite_admin.gif)
 
-## Enable Basic Auth for Kong Manager
+## 10.2. Enable Basic Auth for Kong Manager
 
 To enable this feature, we have to change the docker-compose file.
 
@@ -1204,7 +1204,7 @@ Go to the invited admin link :
 ```url
 http://localhost:8002/register?email=test.test%40gmail.com&username=admin&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MTYzMzYzNzEsImlkIjoiY2JiZGE5Y2UtODQ3NS00MmM2LTk4ZjItNDgwZTI4MjQ4NWNkIn0.sFeOc_5UPIr3MdlQrgyGvmvIjRFvSn3nQjo2ph8GrJA
 ```
-## Use Kong Admin API with RBAC
+## 10.3. Use Kong Admin API with RBAC
 
 As RBAC is set, we can't use kong admin api anymore :
 
@@ -1219,7 +1219,7 @@ Get this error :
 {"message":"Invalid credentials. Token or User credentials required"}
 ```
 
-### Create and admin user with a token
+### 10.3.1. Create and admin user with a token
 
 * Go to Teams
 * RBAC Users
