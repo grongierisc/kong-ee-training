@@ -46,8 +46,13 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [Limit access](#limit-access)
     - [Create a role](#create-a-role)
     - [Add role to Spec](#add-role-to-spec)
-    - [Register a new developer](#register-a-new-developer)
-    - [Approve this developer](#approve-this-developer)
+    - [Test it !](#test-it-)
+      - [Register a new developer](#register-a-new-developer)
+      - [Approve this developer](#approve-this-developer)
+  - [Add Oauth2 for developer](#add-oauth2-for-developer)
+    - [First remove basic auth](#first-remove-basic-auth)
+    - [Second, add application-registration plugin](#second-add-application-registration-plugin)
+      - [Test it !](#test-it--1)
 
 # 2. Introduction
 
@@ -1005,10 +1010,108 @@ contents":"x-headmatter:\\n  readable_by:\\n    - dev
 Refere to this documentation : 
 [readable_by attribute](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
 
-### Register a new developer
+### Test it !
+
+#### Register a new developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/new_dev_sign.gif)
 
-### Approve this developer
+#### Approve this developer
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/approve_new_dev.gif)
+
+## Add Oauth2 for developer
+
+In this part we will add an Oauth2 authentification for developers to use securely our crud API.
+
+This flow will provide sefl regristation from developer and grant them access to the crud API.
+### First remove basic auth
+
+To do so, we will replace our basic auth to an bearToken one.
+
+First disable our basic auth/acl.
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/acl_disable.png)
+
+
+</td>
+<td>
+
+```sh
+# Disable ACL Plugin
+
+curl 'http://localhost:8001/default/routes/afefe836-b9be-49a8-927a-1324a8597a9c/plugins/3f2e605e-9cb6-454a-83ec-d1b1929b1d30' -X PATCH --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Cache-Control: no-cache' -H 'Origin: http://localhost:8002' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: http://localhost:8002/default/plugins/acl/3f2e605e-9cb6-454a-83ec-d1b1929b1d30/update' -H 'Pragma: no-cache' --data-raw '{"enabled":false,"name":"acl","route":{"id":"afefe836-b9be-49a8-927a-1324a8597a9c"},"config":{"hide_groups_header":false,"whitelist":["user","dev","crud"]}}'
+
+```
+
+</td>
+</tr>
+</table>
+
+### Second, add application-registration plugin
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/application_registration_plugin.png)
+
+
+</td>
+<td>
+
+```sh
+# Create application-registration plugin
+
+curl -i -X POST \
+--url http://localhost:8001/services/crud/plugins \
+--data 'name=application-registration' \
+--data 'config.auth_header_name=authorization' \
+--data 'config.auto_approve=true' \
+--data 'config.display_name=auth' \
+--data 'config.enable_client_credentials=true' 
+```
+
+</td>
+</tr>
+</table>
+
+#### Test it !
+
+From the dev portal logged as dev@dev.com, create a new application.
+
+This will give you client_id and client_secret.
+
+Thoses can be used in the swagger dev portal.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/add_app_dev.png)
+
+Get token:
+
+```sh
+curl --insecure -X POST https://localhost:8443/persons/oauth2/token \
+  --data "grant_type=client_credentials" \
+  --data "client_id=2TXNvDqjeVMHydJbjv9t96lWTXOKAtU8" \
+  --data "client_secret=V6Vma6AtIvl04UYssz6gAxPc92eCF4KR"
+```
+
+Use token :
+
+```sh
+curl --insecure -X GET https://localhost:8443/persons/all \
+  --header "authorization: Bearer u5guWaYR3BjZ1KdwuBSC6C7udCYxj5vK"
+```
