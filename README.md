@@ -1024,7 +1024,7 @@ Refere to this documentation :
 
 #### Add role for this developer
 
-TODO
+![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/add_role_dev.gif)
 
 ## Add Oauth2 for developer
 
@@ -1129,11 +1129,11 @@ This will give you client_id and client_secret.
 
 Thoses can be used in the swagger dev portal.
 
-![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/add_app_dev.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/add_app_dev.gif)
 
 Register this application to the crud service :
 
-![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/register_app_dev.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/register_app_dev.gif)
 
 Get token:
 
