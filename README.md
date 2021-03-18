@@ -49,9 +49,11 @@ This repository contains the materials, examples, excercices to learn the basic 
     - [Test it !](#test-it-)
       - [Register a new developer](#register-a-new-developer)
       - [Approve this developer](#approve-this-developer)
+      - [Add role for this developer](#add-role-for-this-developer)
   - [Add Oauth2 for developer](#add-oauth2-for-developer)
     - [First remove basic auth](#first-remove-basic-auth)
     - [Second, add application-registration plugin](#second-add-application-registration-plugin)
+    - [Link service and documentation](#link-service-and-documentation)
       - [Test it !](#test-it--1)
 
 # 2. Introduction
@@ -1020,6 +1022,10 @@ Refere to this documentation :
 
 ![video](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/approve_new_dev.gif)
 
+#### Add role for this developer
+
+TODO
+
 ## Add Oauth2 for developer
 
 In this part we will add an Oauth2 authentification for developers to use securely our crud API.
@@ -1090,6 +1096,31 @@ curl -i -X POST \
 </tr>
 </table>
 
+### Link service and documentation
+
+<table>
+<tr>
+<th> IAM Portal </th>
+<th> Rest API </th>
+</tr>
+<tr>
+<td>
+
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/link_service_doc.png)
+
+
+</td>
+<td>
+
+```sh
+curl 'http://localhost:8001/default/document_objects' --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Cache-Control: no-cache' -H 'Origin: http://localhost:8002' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: http://localhost:8002/default/services/create-documentation' -H 'Pragma: no-cache' --data-raw '{"service":{"id":"7bcef2e6-117c-487a-aab2-c7e57a0bf61a"},"path":"specs/iam-training.yml"}'
+```
+
+</td>
+</tr>
+</table>
+
 #### Test it !
 
 From the dev portal logged as dev@dev.com, create a new application.
@@ -1099,6 +1130,10 @@ This will give you client_id and client_secret.
 Thoses can be used in the swagger dev portal.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/add_app_dev.png)
+
+Register this application to the crud service :
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/video/register_app_dev.png)
 
 Get token:
 
