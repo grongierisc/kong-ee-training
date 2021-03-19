@@ -1582,15 +1582,15 @@ local pluginName = package:match("^kong%-plugin%-(.+)$")  -- "myPlugin"
 
 supported_platforms = {"linux", "macosx"}
 source = {
-  url = "https://github.com/thg303/kong-plugin-reskeymod.git",
+  url = "https://github.com/grongierisc/iam-training",
   branch = "master",
 --  tag = "0.1.0"
 -- hint: "tag" could be used to match tag in the repository
 }
 
 description = {
-  summary = "This Kong plugin enables you to change the names of keys in JSON response body.",
-  homepage = "https://github.com/gpetrousov/kong-plugin-reskeymod",
+  summary = "This a demo helloworld for Kong plugin",
+  homepage = "https://github.com/grongierisc/iam-training",
   license = "Apache 2.0"
 }
 
