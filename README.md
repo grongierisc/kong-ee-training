@@ -1386,6 +1386,9 @@ curl -i -X POST \
 --data 'paths=/crud/persons/*' \
 --data 'strip_path=true'
 ```
+</td>
+</tr>
+</table>
 
 3. Re-use our auto-auth
 
