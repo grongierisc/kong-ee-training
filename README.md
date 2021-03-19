@@ -60,11 +60,19 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [10.2. Enable Basic Auth for Kong Manager](#102-enable-basic-auth-for-kong-manager)
   - [10.3. Use Kong Admin API with RBAC](#103-use-kong-admin-api-with-rbac)
     - [10.3.1. Create and admin user with a token](#1031-create-and-admin-user-with-a-token)
-- [11. Plugins !](#11-plugins-)
+- [11. Plugins](#11-plugins)
   - [11.1. Import a community plugin](#111-import-a-community-plugin)
     - [11.1.1. Build a new Kong/IAM docker image with the community plugin](#1111-build-a-new-kongiam-docker-image-with-the-community-plugin)
     - [11.1.2. Test it !](#1112-test-it-)
       - [11.1.2.1. Use it !](#11121-use-it-)
+  - [11.2. Create a new plugin](#112-create-a-new-plugin)
+    - [11.2.1. File structure](#1121-file-structure)
+      - [11.2.1.1. handler.lua](#11211-handlerlua)
+        - [11.2.1.1.1. Example](#112111-example)
+      - [11.2.1.2. schema.lua](#11212-schemalua)
+      - [11.2.1.3. *.rockspec](#11213-rockspec)
+    - [11.2.2. Build it](#1122-build-it)
+    - [11.2.3. Tips](#1123-tips)
 
 # 2. Introduction
 
@@ -1239,7 +1247,7 @@ curl -s -X GET \
   --header "Kong-Admin-Token: SYS"
 ```
 
-# 11. Plugins !
+# 11. Plugins
 
 Kong come with high quality plugins. 
 
@@ -1473,3 +1481,180 @@ curl --location --request GET 'http://localhost:8000/crud/persons/all' \
 --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW0iOiJ0ZXN0Iiwic3ViIjoiODJiNjcwZDgtNmY2OC00NDE5LWJiMmMtMmYxZjMxNTViN2E2Iiwicm9sIjpbInRlc3QiXSwiZXhwIjoxNjE2MjUyMTIwLCJpc3MiOiJ0ZXN0In0.g2jFqe0hDPumy8_gG7J3nYsuZ8KUz9SgZOecdBDhfns'
 ```
 
+## 11.2. Create a new plugin
+
+This is not the place to learn lua. 
+
+But, I'll give you some tips to develope plugins like how to quickly restart IAM to test our new developpement.
+
+### 11.2.1. File structure
+
+```
+kong-plugin-helloworld
+├── kong
+│   └── plugins
+│       └── helloworld
+│           ├── handler.lua
+│           └── schema.lua
+└── kong-plugin-helloworld-0.1.0-1.rockspec
+```
+
+By convention, kong plugins must be prefex by kong-plugin.
+
+In our example, the name of the plugin is helloworld.
+
+Three files are mandatory :
+
+* handler.lua: the core of your plugin. It is an interface to implement, in which each function will be run at the desired moment in the lifecycle of a request / connection.
+* schema.lua: your plugin probably has to retain some configuration entered by the user. This module holds the schema of that configuration and defines rules on it, so that the user can only enter valid configuration values.
+* *.rockspec: Rockspec: a package specification file A declarative Lua script, with rules on how to build and package rocks *.rockspec - a Lua file containing some tables.
+
+#### 11.2.1.1. handler.lua
+
+The plugins interface allows you to override any of the following methods in your handler.lua file to implement custom logic at various entry-points of the execution life-cycle of Kong:
+
+|Function name |Phase |Description|
+|----|----|----|
+|:init_worker() |init_worker |Executed upon every Nginx worker process’s startup.|
+|:certificate() |ssl_certificate |Executed during the SSL certificate serving phase of the SSL handshake.|
+|:rewrite() |rewrite |Executed for every request upon its reception from a client as a rewrite phase handler. NOTE in this phase neither the Service nor the Consumer have been identified, hence this handler will only be executed if the plugin was configured as a global plugin!|
+|:access() |access |Executed for every request from a client and before it is being proxied to the upstream service.|
+|:response() |access |Replaces both header_filter() and body_filter(). Executed after the whole response has been received from the upstream service, but before sending any part of it to the client.|
+|:header_filter() |header_filter |Executed when all response headers bytes have been received from the upstream service.|
+|:body_filter() |body_filter |Executed for each chunk of the response body received from the upstream service. Since the response is streamed back to the client, it can exceed the buffer size and be streamed chunk by chunk. hence this method can be called multiple times if the response is large. See the lua-nginx-module documentation for more details.|
+|:log() |log |Executed when the last response byte has been sent to the client.|
+
+##### 11.2.1.1.1. Example
+
+```lua
+local BasePlugin = require "kong.plugins.base_plugin"
+
+local HelloWorldHandler = BasePlugin:extend()
+
+function HelloWorldHandler:new()
+  HelloWorldHandler.super.new(self, "helloworld")
+end
+
+function HelloWorldHandler:access(conf)
+  HelloWorldHandler.super.access(self)
+  if conf.say_hello then
+    ngx.log(ngx.ERR, "============ Hello World! ============")
+    ngx.header["Hello-World"] = "Hello World!!!"
+  else
+    ngx.log(ngx.ERR, "============ Bye World! ============")
+    ngx.header["Hello-World"] = "Bye World!!!"
+  end
+end
+
+return HelloWorldHandler
+```
+
+#### 11.2.1.2. schema.lua
+
+Simply the configuration file see in the portal.
+
+```lua
+return {
+    no_consumer = true,
+    fields = {
+      say_hello = { type = "boolean", default = true },
+      say_hello_body = { type = "boolean", default = true }
+    }
+  }
+```
+
+#### 11.2.1.3. *.rockspec
+
+```rockspec
+package = "kong-plugin-helloworld"  -- hint: rename, must match the info in the filename of this rockspec!
+                                  -- as a convention; stick to the prefix: `kong-plugin-`
+version = "0.1.0-1"               -- hint: renumber, must match the info in the filename of this rockspec!
+-- The version '0.1.0' is the source code version, the trailing '1' is the version of this rockspec.
+-- whenever the source version changes, the rockspec should be reset to 1. The rockspec version is only
+-- updated (incremented) when this file changes, but the source remains the same.
+
+-- TODO: This is the name to set in the Kong configuration `plugins` setting.
+-- Here we extract it from the package name.
+local pluginName = package:match("^kong%-plugin%-(.+)$")  -- "myPlugin"
+
+supported_platforms = {"linux", "macosx"}
+source = {
+  url = "https://github.com/thg303/kong-plugin-reskeymod.git",
+  branch = "master",
+--  tag = "0.1.0"
+-- hint: "tag" could be used to match tag in the repository
+}
+
+description = {
+  summary = "This Kong plugin enables you to change the names of keys in JSON response body.",
+  homepage = "https://github.com/gpetrousov/kong-plugin-reskeymod",
+  license = "Apache 2.0"
+}
+
+dependencies = {
+   "lua >= 5.1"
+   -- other dependencies should appear here
+}
+
+build = {
+  type = "builtin",
+  modules = {
+    ["kong.plugins."..pluginName..".handler"] = "kong/plugins/"..pluginName.."/handler.lua",
+    ["kong.plugins."..pluginName..".schema"] = "kong/plugins/"..pluginName.."/schema.lua",
+  }
+}
+```
+
+### 11.2.2. Build it
+
+We will be doing the same as here :
+[11.1.1. Build a new Kong/IAM docker image with the community plugin](#1111-build-a-new-kongiam-docker-image-with-the-community-plugin)
+
+But adapted to our plugin :
+
+Dockerfile :
+```dockerfile
+FROM intersystems/iam:1.5.0.9-4
+
+USER root
+COPY ./plugins /custom/plugins
+
+RUN cd /custom/plugins/kong-plugin-jwt-crafter && luarocks make
+RUN cd /custom/plugins/kong-plugin-helloworld && luarocks make
+
+#USER kong #Stay with root use, we will see why later
+```
+
+Enable the plugin in the environment variables
+```yml
+KONG_PLUGINS: 'bundled,jwt-crafter,helloworld'
+```
+
+Now build our new iam image :
+
+```sh
+docker-compose build iam
+```
+
+Then docker-compose up and test it.
+
+### 11.2.3. Tips
+
+To run the IAM container in "debug mode", to easily stop/restart it, modify the dockerfile to add/remove plugin and so on.
+
+You can stop iam service :
+```sh
+docker-compose stop iam
+```
+
+And start it in run mode with a shell :
+```sh
+docker-compose run -p 8000:8000 -p 8001:8001 -p 8002:8002 iam sh
+```
+
+In the container :
+```sh
+./docker-entrypoint.sh kong
+```
+
+Happy coding :)
