@@ -60,11 +60,11 @@ This repository contains the materials, examples, excercices to learn the basic 
   - [10.2. Enable Basic Auth for Kong Manager](#102-enable-basic-auth-for-kong-manager)
   - [10.3. Use Kong Admin API with RBAC](#103-use-kong-admin-api-with-rbac)
     - [10.3.1. Create and admin user with a token](#1031-create-and-admin-user-with-a-token)
-- [Plugins !](#plugins-)
-  - [Import a community plugin](#import-a-community-plugin)
-    - [Build a new Kong/IAM docker image with the community plugin](#build-a-new-kongiam-docker-image-with-the-community-plugin)
-    - [Test it !](#test-it-)
-      - [Use it !](#use-it-)
+- [11. Plugins !](#11-plugins-)
+  - [11.1. Import a community plugin](#111-import-a-community-plugin)
+    - [11.1.1. Build a new Kong/IAM docker image with the community plugin](#1111-build-a-new-kongiam-docker-image-with-the-community-plugin)
+    - [11.1.2. Test it !](#1112-test-it-)
+      - [11.1.2.1. Use it !](#11121-use-it-)
 
 # 2. Introduction
 
@@ -1239,7 +1239,7 @@ curl -s -X GET \
   --header "Kong-Admin-Token: SYS"
 ```
 
-# Plugins !
+# 11. Plugins !
 
 Kong come with high quality plugins. 
 
@@ -1249,7 +1249,7 @@ In this chapier we will talk about community plugins, how to import them.
 
 Then, we will see how-to build our own plugin.
 
-## Import a community plugin
+## 11.1. Import a community plugin
 
 For this part, we will be using the jwt-crafter plugin.
 
@@ -1262,7 +1262,7 @@ https://github.com/grongierisc/kong-plugin-jwt-crafter
 
 To install this plugin, as we are using the docker version, we have to build a new image who embed the plugin.
 
-### Build a new Kong/IAM docker image with the community plugin
+### 11.1.1. Build a new Kong/IAM docker image with the community plugin
 
 1. Create a folder named iam at root of this git.
 2. Create a dockerfile in this new folder
@@ -1314,7 +1314,7 @@ Now build our new iam image :
 docker-compose build iam
 ```
 
-### Test it !
+### 11.1.2. Test it !
 
 ```sh
 docker-compose up -d
@@ -1324,7 +1324,7 @@ If you go to plugin -> new, at the bottum of the list you should see the jwt-cra
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/jwt_crafter.png)
 
-#### Use it !
+#### 11.1.2.1. Use it !
 
 1. Create a new service :
 
