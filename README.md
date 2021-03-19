@@ -1410,47 +1410,66 @@ curl -i -X POST \
 Now we are set. The real use of jwt-crafter.
 
 ```bash
-# Create sign in API
-## First the service
+# Add acl to route
+curl -i -X POST http://localhost:8001/routes/crud-route-jwt/plugins \
+    --data "name=acl"  \
+    --data "config.whitelist=test" \
+    --data "config.hide_groups_header=false"
+
+# Create service
 curl -i -X POST \
---url http://localhost:8001/services/ \
---data 'name=jwt-crafter' \
---data 'url=http://notused'
+  --url http://localhost:8001/services/ \
+  --data 'name=jwt-login' \
+  --data 'url=http://neverinvoked/'
 
-## Second the route
+# Create route
 curl -i -X POST \
---url http://localhost:8001/services/jwt-crafter/routes \
---data 'name=jwt-crafter-route' \
---data 'paths=/sign_in' \
---data 'strip_path=false'
+  --url http://localhost:8001/services/jwt-login/routes \
+  --data 'name=jwt-login-route' \
+  --data 'paths=/jwt/log-in'
 
-# Create consumer
-# Add consumer user
+# Enable basic auth for service
+curl -i -X POST http://localhost:8001/routes/jwt-login-route/plugins \
+    --data "name=basic-auth"  \
+    --data "config.hide_credentials=false"
+
+# Enable basic auth for service
+curl -i -X POST http://localhost:8001/routes/jwt-login-route/plugins \
+    --data "name=jwt-crafter"  \
+    --data "config.expires_in=86400"
+
+# Add consumer
 curl -i -X POST \
---url http://localhost:8001/consumers/ \
---data "username=test" \
---data "custom_id=test"
+   --url http://localhost:8001/consumers/ \
+   --data "username=test"
 
-# Create JWT credential for consumer
-## Add plugin
-curl 'http://localhost:8001/default/plugins' --compressed -H 'Content-Type: application/json;charset=utf-8' -H 'Cache-Control: no-cache' -H 'Origin: http://localhost:8002' -H 'DNT: 1' -H 'Connection: keep-alive' -H 'Referer: http://localhost:8002/default/plugins/select/jwt' -H 'Pragma: no-cache' --data-raw '{"enabled":true,"name":"jwt","config":{"cookie_names":[],"header_names":["authorization"],"key_claim_name":"iss","maximum_expiration":0,"run_on_preflight":true,"secret_is_base64":false,"uri_param_names":["jwt"]}}'
-## Add jwt token to user
-curl -XPOST localhost:8001/consumers/test/jwt \
---data "algorithm=HS256"
+# Add consumer group
+curl -i -X POST \
+   --url http://localhost:8001/consumers/test/acls \
+   --data "group=test"
 
-# Create basic auth credentials for consumer
-curl -XPOST -d 'username=test' -d 'password=test' localhost:8001/consumers/test/basic-auth
+# Add consumer credentials
+curl -i -X POST http://localhost:8001/consumers/test/basic-auth \
+    --data "username=test" \
+    --data "password=test"
+curl -i -X POST http://localhost:8001/consumers/test/jwt \
+    --data "key=test" \
+    --data "algorithm=HS256"
 
-# Enable basic auth for sign in API
-curl -XPOST -d 'name=basic-auth' localhost:8001/services/jwt-crafter/plugins
-
-# Enable jwt-crafter plugin
-curl -X POST -d 'name=jwt-crafter' localhost:8001/services/jwt-crafter/plugins
+# JWT plugins
+curl -i -X POST http://localhost:8001/routes/crud-route-jwt/plugins \
+    --data "name=jwt" 
 ```
 
 Test it !
 
 ```bash
-# user:pass is base64 encoded
-curl -H 'Authorization: basic dGVzdDp0ZXN0' localhost:8000/sign_in
+# test:test is base64 encoded
+curl -H 'Authorization: basic dGVzdDp0ZXN0' localhost:8000/jwt/log-in
 ```
+
+```bash
+curl --location --request GET 'http://localhost:8000/crud/persons/all' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW0iOiJ0ZXN0Iiwic3ViIjoiODJiNjcwZDgtNmY2OC00NDE5LWJiMmMtMmYxZjMxNTViN2E2Iiwicm9sIjpbInRlc3QiXSwiZXhwIjoxNjE2MjUyMTIwLCJpc3MiOiJ0ZXN0In0.g2jFqe0hDPumy8_gG7J3nYsuZ8KUz9SgZOecdBDhfns'
+```
+
