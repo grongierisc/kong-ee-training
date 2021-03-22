@@ -2,6 +2,8 @@
 
 This repository contains the materials, examples, excercices to learn the basic concepts of IAM.
 
+Solutions are in [training branch](https://github.com/grongierisc/iam-training/tree/training)
+
 - [1. InterSystems API Manager Training](#1-intersystems-api-manager-training)
 - [2. Introduction](#2-introduction)
   - [2.1. What is IAM ?](#21-what-is-iam-)
