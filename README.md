@@ -1772,7 +1772,21 @@ This order is important beause you can't remove services with routes.
 
 Routes are dependent from services. For this type of cases we can use Test function of postman to retrive datas :
 
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_form_data.png)
+
+
+<table>
+<tr>
+<th> Screen </th>
+<th> Script </th>
+</tr>
+<tr>
+<td>
+
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_test.png)
+
+</td>
+<td>
 
 ```javascript
 var id = pm.response.json().id;
@@ -1781,6 +1795,13 @@ pm.globals.set("service_crud_id", id);
 pm.globals.set("service_crud_name", name);
 
 ```
+
+</td>
+</tr>
+</table>
+
+
+
 
 Here we save from the response the id and name of the new services.
 
