@@ -1,0 +1,513 @@
+{
+	"info": {
+		"_postman_id": "298af8eb-b401-4f33-b431-a1dc9f0857b7",
+		"name": "DevOps IAM",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0_starting_requests",
+			"item": [
+				{
+					"name": "check IAM status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var iam_url = pm.environment.get(\"iam_url\");",
+									"var iam_config_port = pm.environment.get(\"iam_config_port\");",
+									"var url = \"http://\" + iam_url + \":\" + iam_config_port + \"/\";",
+									"SenReq(20);",
+									"async function SenReq(maxRequest) {",
+									"    var next_request = \"end request\";",
+									"    const result = await SendRequest(maxRequest);",
+									"    console.log(\"result:\",result);",
+									"    if(result == -1)",
+									"    {",
+									"        console.error(\"IAM starting .... failed !!!!\");",
+									"    }",
+									"}",
+									"",
+									"function SendRequest(maxRequest) {",
+									"    return new Promise(resolve => {",
+									"        pm.sendRequest(url,",
+									"            function (err) {",
+									"                if (err) {",
+									"                    if (maxRequest > 1) {",
+									"                        setTimeout(function () {}, 5000);",
+									"                        console.warn(\"IAM not started...retry..next retry in 5 sec\");",
+									"                        SendRequest(maxRequest - 1);",
+									"                    } else {",
+									"                        console.error(\"IAM starting .... failed\");",
+									"                        resolve(-1);",
+									"                    }",
+									"                } else {",
+									"                    console.log(\"IAM starting .... ok\");",
+									"                    resolve(1);",
+									"                }",
+									"",
+									"            }",
+									"        );",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{iam_url}}:{{iam_config_port}}/",
+							"protocol": "http",
+							"host": [
+								"{{iam_url}}"
+							],
+							"port": "{{iam_config_port}}",
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "1_delete_old_datas",
+			"item": [
+				{
+					"name": "0_delete_plugins",
+					"item": [
+						{
+							"name": "delete_routes",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"var iam_url=pm.environment.get(\"iam_url\");",
+											"var iam_config_port=pm.environment.get(\"iam_config_port\");",
+											"",
+											"pm.sendRequest(\"http://\"+iam_url+\":\"+iam_config_port+\"/plugins\", function (err, res) {",
+											"    if (err) {",
+											"        console.log(\"ERROR : \",err);",
+											"    } ",
+											"    else {",
+											"",
+											"        var body_json=res.json();",
+											"        if(body_json.data)",
+											"        {",
+											"            for( i=0; i < body_json.data.length; i++)",
+											"            {",
+											"                // Example with a full fledged SDK Request",
+											"                route_id = body_json.data[i].id;",
+											"                const delete_route = {",
+											"                  url: \"http://\"+iam_url+\":\"+iam_config_port+\"/plugins/\" + route_id,",
+											"                  method: 'DELETE',",
+											"                };",
+											"                pm.sendRequest(delete_route, function(err, res){",
+											"                    console.log(err ? err : res);",
+											"                });",
+											"            }",
+											"        }",
+											"    }",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{iam_url}}:{{iam_config_port}}/plugins/",
+									"protocol": "http",
+									"host": [
+										"{{iam_url}}"
+									],
+									"port": "{{iam_config_port}}",
+									"path": [
+										"plugins",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "1_delete_routes",
+					"item": [
+						{
+							"name": "delete_routes",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"var iam_url=pm.environment.get(\"iam_url\");",
+											"var iam_config_port=pm.environment.get(\"iam_config_port\");",
+											"",
+											"pm.sendRequest(\"http://\"+iam_url+\":\"+iam_config_port+\"/routes\", function (err, res) {",
+											"    if (err) {",
+											"        console.log(\"ERROR : \",err);",
+											"    } ",
+											"    else {",
+											"",
+											"        var body_json=res.json();",
+											"        if(body_json.data)",
+											"        {",
+											"            for( i=0; i < body_json.data.length; i++)",
+											"            {",
+											"                // Example with a full fledged SDK Request",
+											"                route_id = body_json.data[i].id;",
+											"                const delete_route = {",
+											"                  url: \"http://\"+iam_url+\":\"+iam_config_port+\"/routes/\" + route_id,",
+											"                  method: 'DELETE',",
+											"                };",
+											"                pm.sendRequest(delete_route, function(err, res){",
+											"                    console.log(err ? err : res);",
+											"                });",
+											"            }",
+											"        }",
+											"    }",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{iam_url}}:{{iam_config_port}}/routes/",
+									"protocol": "http",
+									"host": [
+										"{{iam_url}}"
+									],
+									"port": "{{iam_config_port}}",
+									"path": [
+										"routes",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "2_delete_services",
+					"item": [
+						{
+							"name": "delete services",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"var iam_url=pm.environment.get(\"iam_url\");",
+											"var iam_config_port=pm.environment.get(\"iam_config_port\");",
+											"",
+											"pm.sendRequest(\"http://\"+iam_url+\":\"+iam_config_port+\"/services\", function (err, res) {",
+											"    if (err) {",
+											"        console.log(\"ERROR : \",err);",
+											"    } ",
+											"    else {",
+											"",
+											"        var body_json=res.json();",
+											"        if(body_json.data)",
+											"        {",
+											"            for( i=0; i < body_json.data.length; i++)",
+											"            {",
+											"                // Example with a full fledged SDK Request",
+											"                id = body_json.data[i].id;",
+											"                const delete_route = {",
+											"                  url: \"http://\"+iam_url+\":\"+iam_config_port+\"/services/\" + id,",
+											"                  method: 'DELETE',",
+											"                };",
+											"                pm.sendRequest(delete_route, function(err, res){",
+											"                    console.log(err ? err : res);",
+											"                });",
+											"            }",
+											"        }",
+											"    }",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{iam_url}}:{{iam_config_port}}/services/",
+									"protocol": "http",
+									"host": [
+										"{{iam_url}}"
+									],
+									"port": "{{iam_config_port}}",
+									"path": [
+										"services",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "3_delete_consumers",
+					"item": [
+						{
+							"name": "delete consumers",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"",
+											"var iam_url=pm.environment.get(\"iam_url\");",
+											"var iam_config_port=pm.environment.get(\"iam_config_port\");",
+											"",
+											"pm.sendRequest(\"http://\"+iam_url+\":\"+iam_config_port+\"/consumers\", function (err, res) {",
+											"    if (err) {",
+											"        console.log(\"ERROR : \",err);",
+											"    } ",
+											"    else {",
+											"",
+											"        var body_json=res.json();",
+											"        if(body_json.data)",
+											"        {",
+											"            for( i=0; i < body_json.data.length; i++)",
+											"            {",
+											"                // Example with a full fledged SDK Request",
+											"                id = body_json.data[i].id;",
+											"                const delete_route = {",
+											"                  url: \"http://\"+iam_url+\":\"+iam_config_port+\"/consumers/\" + id,",
+											"                  method: 'DELETE',",
+											"                };",
+											"                pm.sendRequest(delete_route, function(err, res){",
+											"                    console.log(err ? err : res);",
+											"                });",
+											"            }",
+											"        }",
+											"    }",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{iam_url}}:{{iam_config_port}}/services/",
+									"protocol": "http",
+									"host": [
+										"{{iam_url}}"
+									],
+									"port": "{{iam_config_port}}",
+									"path": [
+										"services",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "2_create_services",
+			"item": [
+				{
+					"name": "create crud service",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"var id = pm.response.json().id;",
+									"var name = pm.response.json().name;",
+									"pm.globals.set(\"service_crud_id\", id);",
+									"pm.globals.set(\"service_crud_name\", name);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "crud",
+									"type": "text"
+								},
+								{
+									"key": "url",
+									"value": "http://iris:52773/crud/",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{iam_url}}:{{iam_config_port}}/services/",
+							"protocol": "http",
+							"host": [
+								"{{iam_url}}"
+							],
+							"port": "{{iam_config_port}}",
+							"path": [
+								"services",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3_create_routes",
+			"item": [
+				{
+					"name": "create crud route",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"service_crud_name = pm.globals.get(\"service_crud_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"paths\": [\n        \"/persons/*\"\n    ],\n    \"protocols\": [\n        \"http\"\n    ],\n    \"name\": \"crud-persons\",\n    \"strip_path\": false,\n    \"service\": {\n        \"name\": \"{{service_crud_name}}\"\n        }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{iam_url}}:{{iam_config_port}}/routes/",
+							"protocol": "http",
+							"host": [
+								"{{iam_url}}"
+							],
+							"port": "{{iam_config_port}}",
+							"path": [
+								"routes",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4_create_plugins",
+			"item": [
+				{
+					"name": "create crud plugin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"service_crud_name = pm.globals.get(\"service_crud_name\");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"config\": {\n        \"replace\": {\n            \"querystring\": [],\n            \"headers\": [\n                \"Authorization:Basic U3VwZXJVc2VyOlNZUw==\"\n            ],\n            \"uri\": null,\n            \"body\": []\n        },\n        \"add\": {\n            \"querystring\": [],\n            \"headers\": [\n                \"Authorization:Basic U3VwZXJVc2VyOlNZUw==\"\n            ],\n            \"body\": []\n        }\n    },\n    \"service\": {\n        \"name\": \"{{service_crud_name}}\"\n        },\n    \"name\": \"request-transformer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{iam_url}}:{{iam_config_port}}/plugins/",
+							"protocol": "http",
+							"host": [
+								"{{iam_url}}"
+							],
+							"port": "{{iam_config_port}}",
+							"path": [
+								"plugins",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "end request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{iam_url}}:{{iam_config_port}}/",
+					"protocol": "http",
+					"host": [
+						"{{iam_url}}"
+					],
+					"port": "{{iam_config_port}}",
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
