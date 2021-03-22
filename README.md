@@ -1885,3 +1885,9 @@ Easy way to get the json format, go to the manager portal, view, copy json :
 
 ## 12.2. Run it with newman
 
+```sh
+docker run  --rm -v "`pwd`/ci/":"/etc/newman" \
+ --network="iam-training_default" \
+ -t postman/newman run "DevOps_IAM.postman_collection.json" \
+ --environment="DevOps_IAM.postman_environment.json"
+```
