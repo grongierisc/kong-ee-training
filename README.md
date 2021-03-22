@@ -73,6 +73,13 @@ This repository contains the materials, examples, excercices to learn the basic 
       - [11.2.1.3. *.rockspec](#11213-rockspec)
     - [11.2.2. Build it](#1122-build-it)
     - [11.2.3. Tips](#1123-tips)
+- [12. CI/CD](#12-cicd)
+  - [12.1. Create the postman collection](#121-create-the-postman-collection)
+    - [12.1.1. Is IAM startup ?](#1211-is-iam-startup-)
+    - [12.1.2. Delete old datas](#1212-delete-old-datas)
+    - [12.1.3. Create Service/Route](#1213-create-serviceroute)
+      - [12.1.3.1. Tips](#12131-tips)
+  - [12.2. Run it with newman](#122-run-it-with-newman)
 
 # 2. Introduction
 
@@ -1661,3 +1668,226 @@ In the container :
 ```
 
 Happy coding :)
+
+# 12. CI/CD
+
+We are close to the end of this training. 
+
+To finish let's talk about DevOps/CI/CD. The aim of this chapter is to give you some ideas about how to implement/script ci/cd for IAM/Kong.
+
+As Kong is API first, the idea is to script all the rest calls and play then on each environement.
+
+The easiest way to script rest calls is with postman and his best friend newman (command line version of postman).
+
+## 12.1. Create the postman collection
+
+On thing handy with postman is it's ability to run script before and after a rest call.
+
+We will use this fonctionnality in most cases.
+
+### 12.1.1. Is IAM startup ?
+
+Our first script will check if IAM is up and running.
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_startup.png)
+
+```javascript
+var iam_url = pm.environment.get("iam_url");
+var iam_config_port = pm.environment.get("iam_config_port");
+var url = "http://" + iam_url + ":" + iam_config_port + "/";
+SenReq(20);
+async function SenReq(maxRequest) {
+    var next_request = "end request";
+    const result = await SendRequest(maxRequest);
+    console.log("result:",result);
+    if(result == -1)
+    {
+        console.error("IAM starting .... failed !!!!");
+    }
+}
+
+function SendRequest(maxRequest) {
+    return new Promise(resolve => {
+        pm.sendRequest(url,
+            function (err) {
+                if (err) {
+                    if (maxRequest > 1) {
+                        setTimeout(function () {}, 5000);
+                        console.warn("IAM not started...retry..next retry in 5 sec");
+                        SendRequest(maxRequest - 1);
+                    } else {
+                        console.error("IAM starting .... failed");
+                        resolve(-1);
+                    }
+                } else {
+                    console.log("IAM starting .... ok");
+                    resolve(1);
+                }
+
+            }
+        );
+    });
+}
+```
+
+### 12.1.2. Delete old datas
+
+```javascript
+
+var iam_url=pm.environment.get("iam_url");
+var iam_config_port=pm.environment.get("iam_config_port");
+
+pm.sendRequest("http://"+iam_url+":"+iam_config_port+"/plugins", function (err, res) {
+    if (err) {
+        console.log("ERROR : ",err);
+    } 
+    else {
+
+        var body_json=res.json();
+        if(body_json.data)
+        {
+            for( i=0; i < body_json.data.length; i++)
+            {
+                // Example with a full fledged SDK Request
+                route_id = body_json.data[i].id;
+                const delete_route = {
+                  url: "http://"+iam_url+":"+iam_config_port+"/plugins/" + route_id,
+                  method: 'DELETE',
+                };
+                pm.sendRequest(delete_route, function(err, res){
+                    console.log(err ? err : res);
+                });
+            }
+        }
+    }
+});
+
+```
+
+Do the same for routes, services and consumers.
+
+This order is important beause you can't remove services with routes.
+
+### 12.1.3. Create Service/Route
+
+Routes are dependent from services. For this type of cases we can use Test function of postman to retrive datas :
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_form_data.png)
+
+
+<table>
+<tr>
+<th> Screen </th>
+<th> Script </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_test.png)
+
+</td>
+<td>
+
+```javascript
+var id = pm.response.json().id;
+var name = pm.response.json().name;
+pm.globals.set("service_crud_id", id);
+pm.globals.set("service_crud_name", name);
+
+```
+
+</td>
+</tr>
+</table>
+
+
+
+
+Here we save from the response the id and name of the new services.
+
+Then we can use it in the next route creation :
+
+<table>
+<tr>
+<th> Screen </th>
+<th> Script </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_pre_script.png)
+
+</td>
+<td>
+
+```javascript
+service_crud_name = pm.globals.get("service_crud_name");
+```
+
+</td>
+</tr>
+</table>
+
+Here we retrive the global variable "service_crud_name".
+
+Then, use it in the actual call.
+
+<table>
+<tr>
+<th> Screen </th>
+<th> Script </th>
+</tr>
+<tr>
+<td>
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_var.png)
+
+</td>
+<td>
+
+```json
+{
+    "paths": [
+        "/persons/*"
+    ],
+    "protocols": [
+        "http"
+    ],
+    "name": "crud-persons",
+    "strip_path": false,
+    "service": {
+        "name": "{{service_crud_name}}"
+        }
+}
+```
+
+</td>
+</tr>
+</table>
+
+
+#### 12.1.3.1. Tips
+
+* paylaod can be either json or form-data
+
+  * form-data :
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_form_data.png)
+
+  * json :
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_json.png)
+
+Easy way to get the json format, go to the manager portal, view, copy json :
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_get_json.png)
+
+
+## 12.2. Run it with newman
+
+```sh
+docker run  --rm -v "`pwd`/ci/":"/etc/newman" \
+ --network="iam-training_default" \
+ -t postman/newman run "DevOps_IAM.postman_collection.json" \
+ --environment="DevOps_IAM.postman_environment.json"
+```
