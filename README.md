@@ -85,6 +85,7 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
 
 # 2. Introduction
 
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/introduction.png)
 ## 2.1. What is IAM ? 
 
 IAM stand for InterSystems API Manager, it's based on **Kong Enterprise Edition**.
@@ -148,6 +149,8 @@ Start this training with the main branch.
 
 At the end of the training, you should have the same result as the training branch.
 # 3. Installation
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/installation.png)
 ## 3.1. What do you need to install? 
 * [Git](https://git-scm.com/downloads) 
 * [Docker](https://www.docker.com/products/docker-desktop) (if you are using Windows, make sure you set your Docker installation to use "Linux containers").
@@ -398,6 +401,8 @@ docker-compose -f "docker-compose.yml" up -d --build
 ```
 
 # 4. First Service/Route
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/service_route.png)
 
 Remember how Kong/IAM works ?
 
@@ -828,6 +833,7 @@ curl -i -X POST \
 
 # 8. Dev Portal
 
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/dev_portal_intro.png)
 ## 8.1. Overview
 
 The Kong Developer Portal provides :
@@ -1259,6 +1265,8 @@ curl -s -X GET \
 
 # 11. Plugins
 
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/plugins_intro.png)
+
 Kong come with high quality plugins. 
 
 But, what if, we need plugin that are not embedded. If we want community plugins ?
@@ -1673,6 +1681,8 @@ In the container :
 Happy coding :)
 
 # 12. CI/CD
+
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/cd_ci_intro.png)
 
 We are close to the end of this training. 
 
