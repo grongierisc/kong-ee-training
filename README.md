@@ -85,7 +85,7 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
 
 # 2. Introduction
 
-![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/introduction.png "Credit : ")
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/introduction.png "Credit : https://blog.octo.com/kong-le-gorille-de-lapi-management-vu-de-pres/")
 
 ## 2.1. What is IAM ? 
 
@@ -373,6 +373,22 @@ Add the .env file in root folder :
 ```env
 IRIS_PASSWORD=SYS
 ```
+
+BTW : Here are the definition of Kong ports :
+
+|Port|Protocol|Description|
+|----|--------|-----------|
+|:8000|HTTP|Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.|
+|:8443|HTTPS|Takes incoming HTTPS traffic from Consumers, and forwards it to upstream Services.|
+|:8001|HTTP|Admin API. Listens for calls from the command line over HTTP.|
+|:8444|HTTPS|Admin API. Listens for calls from the command line over HTTPS.|
+|:8002|HTTP|Kong Manager (GUI). Listens for HTTP traffic.|
+|:8445|HTTPS|Kong Manager (GUI). Listens for HTTPS traffic.|
+|:8003|HTTP|Dev Portal. Listens for HTTP traffic, assuming Dev Portal is enabled.|
+|:8446|HTTPS|Dev Portal. Listens for HTTPS traffic, assuming Dev Portal is enabled.|
+|:8004|HTTP|Dev Portal /files traffic over HTTP, assuming the Dev Portal is enabled.|
+|:8447|HTTPS|Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.|
+
 
 ### 3.4.5. Option : add IRIS_PASSWARD as .env
 
