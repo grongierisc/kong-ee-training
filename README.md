@@ -85,7 +85,8 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
 
 # 2. Introduction
 
-![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/introduction.png)
+![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/introduction.png "Credit : ")
+
 ## 2.1. What is IAM ? 
 
 IAM stand for InterSystems API Manager, it's based on **Kong Enterprise Edition**.
