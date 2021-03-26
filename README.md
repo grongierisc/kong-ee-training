@@ -1,18 +1,18 @@
 # 1. InterSystems API Manager Training
 
-This repository contains the materials, examples, excercices to learn the basic concepts of IAM.
+This repository contains the materials, examples, exercises to learn the basic concepts of IAM.
 
 Solutions are in [training branch](https://github.com/grongierisc/iam-training/tree/training)
 
 - [1. InterSystems API Manager Training](#1-intersystems-api-manager-training)
 - [2. Introduction](#2-introduction)
   - [2.1. What is IAM ?](#21-what-is-iam-)
-  - [2.2. What is an API Managment ?](#22-what-is-an-api-managment-)
+  - [2.2. What is an API Management ?](#22-what-is-an-api-management-)
   - [2.3. IAM Portal](#23-iam-portal)
   - [2.4. Flow of this training](#24-flow-of-this-training)
 - [3. Installation](#3-installation)
   - [3.1. What do you need to install?](#31-what-do-you-need-to-install)
-  - [3.2. How IAM work's with IRIS](#32-how-iam-works-with-iris)
+  - [3.2. How IAM works with IRIS](#32-how-iam-works-with-iris)
   - [3.3. Setup](#33-setup)
   - [3.4. Install IAM](#34-install-iam)
     - [3.4.1. Iris Image](#341-iris-image)
@@ -25,7 +25,7 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
   - [4.1. Create a service](#41-create-a-service)
   - [4.2. Create a route](#42-create-a-route)
   - [4.3. Test it !](#43-test-it-)
-- [5. Second, Go futher with plugin](#5-second-go-futher-with-plugin)
+- [5. Second, go further with plugin](#5-second-go-further-with-plugin)
   - [5.1. Add a plugin to the service](#51-add-a-plugin-to-the-service)
   - [5.2. Test it !](#52-test-it-)
 - [6. Third, add our own authentication](#6-third-add-our-own-authentication)
@@ -41,9 +41,9 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
   - [8.2. Enable it !](#82-enable-it-)
   - [8.3. Add your first spec](#83-add-your-first-spec)
   - [8.4. Test it !](#84-test-it-)
-  - [8.5. Excercice](#85-excercice)
+  - [8.5. Exercise](#85-exercise)
     - [8.5.1. Solution](#851-solution)
-- [9. Dev Portal, Part two, Authentification](#9-dev-portal-part-two-authentification)
+- [9. Dev Portal, Part two, Authentication](#9-dev-portal-part-two-authentication)
   - [9.1. Enable Basic Auth](#91-enable-basic-auth)
   - [9.2. Limit access](#92-limit-access)
     - [9.2.1. Create a role](#921-create-a-role)
@@ -87,10 +87,10 @@ Solutions are in [training branch](https://github.com/grongierisc/iam-training/t
 
 ## 2.1. What is IAM ? 
 
-IAM stand for InterSystems API Manager, it's based on **Kong Entreprise Edition**.
+IAM stand for InterSystems API Manager, it's based on **Kong Enterprise Edition**.
 
-This mean you have acces on top of Kong OpenSource edition to :
-* Manager Protal
+This mean you have access on top of Kong Open Source edition to :
+* Manager Portal
 * Developer Portal 
 * Advance plugin
   * Oauth2
@@ -99,7 +99,7 @@ This mean you have acces on top of Kong OpenSource edition to :
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/KongEEvsOSS.png)
 
-## 2.2. What is an API Managment ?
+## 2.2. What is an API Management ?
 
 API management is the process of creating and publishing web application programming interfaces (APIs), enforcing their usage policies, controlling access, nurturing the subscriber community, collecting and analyzing usage statistics, and reporting on performance. API Management components provide mechanisms and tools to support developer and subscriber community.
 
@@ -107,9 +107,9 @@ API management is the process of creating and publishing web application program
 
 ## 2.3. IAM Portal
 
-Kong and IAM are design as API first, this mean, every thing done in Kong/IAM can be done by rest calls or the manager portal.
+Kong and IAM are design as API first, this mean, everything done in Kong/IAM can be done by rest calls or the manager portal.
 
-During this training all example / exercice will present both this way :
+During this training all example / exercise will present both this way:
 
 <table>
 <tr>
@@ -146,7 +146,7 @@ https://github.com/grongierisc/iam-training/blob/training/misc/spec.yml
 
 Start this training with the main branch.
 
-At the end of the training you should have the same result as the training branch.
+At the end of the training, you should have the same result as the training branch.
 # 3. Installation
 ## 3.1. What do you need to install? 
 * [Git](https://git-scm.com/downloads) 
@@ -156,7 +156,7 @@ At the end of the training you should have the same result as the training branc
 * InterSystems IRIS IAM enabled license file.
 * IAM Docker image
 
-## 3.2. How IAM work's with IRIS
+## 3.2. How IAM works with IRIS
 
 At Kong/IAM start, the container check for the Kong/IAM license with a curl call.
 
@@ -192,7 +192,7 @@ SuperUser/SYS
 
 ### 3.4.1. Iris Image
 
-First you need to swith for the community edition to an licensed one.
+First you need to switch for the community edition to a licensed one.
 
 To do so, you need to setup your access to InterSystems Container Registry to download IRIS limited access images.
 
@@ -407,7 +407,7 @@ Here, we will build :
 * a service
   * for our crud API
 * a route
-  * to acccess this service
+  * to access this service
 
 ## 4.1. Create a service
 
@@ -511,12 +511,12 @@ What do we see here :
 * Nothing new on legacy side.
 * On kong side :
   * We change the port
-  * The path correspond to the route
+  * The path corresponds to the route
   * We still need to authenticate
 
-# 5. Second, Go futher with plugin
+# 5. Second, go further with plugin
 
-To go futher, we will try to auto-authenticate Kong to the IRIS endpoint.
+To go further, we will try to auto-authenticate Kong to the IRIS endpoint.
 
 To do so, we will use and plugin, resquest-transformer.
 
@@ -586,13 +586,12 @@ curl –i --location --request GET 'http://localhost:8000/persons/all'
 </table>
 
 What do we see here :
-* Error 401 on lecay
-* We reatch the data without authentification
-
+* Error 401 on the original API
+* We reach the data without authentication
 
 # 6. Third, add our own authentication
 
-What we want to achived here is to add our own authentication without any distuption of the orignial API.
+What we want to achieved here is to add our own authentication without any distuption of the original API.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/custom_auth.png)
 
@@ -768,7 +767,7 @@ curl –i --location --request GET 'http://localhost:8000/persons/all' \
 # 7. Exercice, Rate-Limiting
 
 1. Enable Unauthenticated user
-2. Limite rate by 2 calls per minutes to Unauthenticated user
+2. Limit rate by 2 calls per minutes to Unauthenticated user
 
 ## 7.1. Solution
 
@@ -799,7 +798,7 @@ curl -i -X POST \
 </tr>
 </table>
 
-2. Limite rate by 2 calls per minutes to Unauthenticated user
+2. Limit rate by 2 calls per minutes to Unauthenticated user
 
 <table>
 <tr>
@@ -815,7 +814,7 @@ curl -i -X POST \
 <td>
 
 ```sh
-# Add rate limite consumer
+# Add rate limit consumer
 curl -i -X POST \
 --url http://localhost:8001/consumers/anonymous/plugins \
 --data "name=rate-limiting" \
@@ -900,7 +899,7 @@ What happen ?
 
 How-to solve it ?
 
-## 8.5. Excercice
+## 8.5. Exercise
 
 1. Add CORS plugin on route
 
@@ -933,7 +932,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </tr>
 </table>
 
-# 9. Dev Portal, Part two, Authentification
+# 9. Dev Portal, Part two, Authentication
 
 ## 9.1. Enable Basic Auth
 
@@ -964,7 +963,7 @@ curl -i -X POST http://localhost:8001/routes/crud-route/plugins \
 </tr>
 </table>
 
-Now authentification is enable for the dev portal.
+Now authentication is enabled for the dev portal.
 
 ## 9.2. Limit access
 
@@ -1033,8 +1032,10 @@ curl 'http://localhost:8001/default/files/specs/iam-training.yml' -X PATCH -H 'A
 
 What's important here is this part :
 
-```
-contents":"x-headmatter:\\n  readable_by:\\n    - dev
+```yml
+x-headmatter:
+  readable_by:
+    - dev
 ```
 Refere to this documentation : 
 [readable_by attribute](https://docs.konghq.com/enterprise/1.5.x/developer-portal/administration/developer-permissions/#readable_by-attribute)
@@ -1059,12 +1060,12 @@ curl 'http://localhost:8001/default/developers/dev@dev.com' -X PATCH --compresse
 
 ## 9.3. Add Oauth2 for developer
 
-In this part we will add an Oauth2 authentification for developers to use securely our crud API.
+In this part we will add an Oauth2 authentication for developers to use securely our crud API.
 
-This flow will provide sefl regristation from developer and grant them access to the crud API.
+This flow will provide self-registration from developer and grant them access to the crud API.
 ### 9.3.1. First, remove basic auth
 
-To do so, we will replace our basic auth to an bearToken one.
+To do so, we will replace our basic auth to a bearToken one.
 
 First disable our basic auth/acl.
 
@@ -1160,7 +1161,7 @@ From the dev portal logged as dev@dev.com, create a new application.
 
 This will give you client_id and client_secret.
 
-Thoses can be used in the swagger dev portal.
+Theses can be used in the swagger dev portal.
 
 Register this application to the crud service :
 
@@ -1186,7 +1187,7 @@ curl --insecure -X GET https://localhost:8443/persons/all \
 
 ## 10.1. Create an admin
 
-As we haved bootstrap Kong without a seed password.
+As we have bootstrap Kong without a seed password.
 
 We have to create an admin before enforcing RBAC.
 
@@ -1207,7 +1208,7 @@ To do so:
 
 To enable this feature, we have to change the docker-compose file.
 
-Add this to the iam service, environement
+Add this to the iam service, environment
 
 ```yml
       KONG_ENFORCE_RBAC: 'on'
@@ -1262,7 +1263,7 @@ Kong come with high quality plugins.
 
 But, what if, we need plugin that are not embedded. If we want community plugins ?
 
-In this chapier we will talk about community plugins, how to import them. 
+In this chapiter, we will talk about community plugins, how to import them. 
 
 Then, we will see how-to build our own plugin.
 
@@ -1270,7 +1271,7 @@ Then, we will see how-to build our own plugin.
 
 For this part, we will be using the jwt-crafter plugin.
 
-This plugin adds the possibility to generate a JWT token within Kong itself, eliminating the need for a upstream service doing the token generation.
+This plugin adds the possibility to generate a JWT token within Kong itself, eliminating the need for an upstream service doing the token generation.
 
 Here is the plugin :
 ```
@@ -1308,7 +1309,7 @@ USER kong
 
 What we see in this dockerfile ?
 
-Simply to install a communty plugin, we have to move to it's root folder (where the rockspec is) and call luarocks make. That's it. You have install the plugin.
+Simply to install a community plugin, we have to move to its root folder (where the rockspec is) and call luarocks make. That's it. You have installed the plugin.
 
 For the docker-compose part :
 
@@ -1337,7 +1338,7 @@ docker-compose build iam
 docker-compose up -d
 ```
 
-If you go to plugin -> new, at the bottum of the list you should see the jwt-crafter plugin.
+If you go to plugin -> new, at the bottom of the list you should see the jwt-crafter plugin.
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/jwt_crafter.png)
 
@@ -1497,7 +1498,7 @@ curl --location --request GET 'http://localhost:8000/crud/persons/all' \
 
 This is not the place to learn lua. 
 
-But, I'll give you some tips to develope plugins like how to quickly restart IAM to test our new developpement.
+But I'll give you some tips like how to quickly restart IAM to test our new development.
 
 ### 11.2.1. File structure
 
@@ -1511,7 +1512,7 @@ kong-plugin-helloworld
 └── kong-plugin-helloworld-0.1.0-1.rockspec
 ```
 
-By convention, kong plugins must be prefex by kong-plugin.
+By convention, kong plugins must be prefix by kong-plugin.
 
 In our example, the name of the plugin is helloworld.
 
@@ -1677,15 +1678,15 @@ We are close to the end of this training.
 
 To finish let's talk about DevOps/CI/CD. The aim of this chapter is to give you some ideas about how to implement/script ci/cd for IAM/Kong.
 
-As Kong is API first, the idea is to script all the rest calls and play then on each environement.
+As Kong is API first, the idea is to script all the rest calls and play then on each environment.
 
 The easiest way to script rest calls is with postman and his best friend newman (command line version of postman).
 
 ## 12.1. Create the postman collection
 
-On thing handy with postman is it's ability to run script before and after a rest call.
+One thing handy with postman is its ability to run script before and after a rest call.
 
-We will use this fonctionnality in most cases.
+We will use this functionality in most cases.
 
 ### 12.1.1. Is IAM startup ?
 
@@ -1772,7 +1773,7 @@ This order is important beause you can't remove services with routes.
 
 ### 12.1.3. Create Service/Route
 
-Routes are dependent from services. For this type of cases we can use Test function of postman to retrive datas :
+Routes are dependent from services. For this type of cases we can use Test function of postman to retrieve data :
 
 ![alt](https://raw.githubusercontent.com/grongierisc/iam-training/training/misc/img/postman_form_data.png)
 
@@ -1830,7 +1831,7 @@ service_crud_name = pm.globals.get("service_crud_name");
 </tr>
 </table>
 
-Here we retrive the global variable "service_crud_name".
+Here we retrieve the global variable "service_crud_name".
 
 Then, use it in the actual call.
 
