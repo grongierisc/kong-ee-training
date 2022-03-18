@@ -1,6 +1,6 @@
 # 1. InterSystems API Manager Training
 
-This repository contains the materials, examples, exercises to learn the basic concepts of IAM.
+This repository contains the materials, examples, exercises to learn the basic concepts of Kong EE.
 
 Solutions are in [training branch](https://github.com/grongierisc/iam-training/tree/training)
 
