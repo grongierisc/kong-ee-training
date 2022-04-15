@@ -5,6 +5,7 @@ services:
       context: .
       dockerfile: dockerfile
     restart: always
+    command: --check-caps false
     ports: 
 #      - 51773
 # new SuperServer Port
