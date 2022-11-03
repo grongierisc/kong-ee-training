@@ -209,7 +209,7 @@ docker login -u="user" -p="token" containers.intersystems.com
 ```
 * Get InterSystems IRIS image:
 ```bash
-docker pull containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
+docker pull containers.intersystems.com/intersystems/iris:2022.2.0.368.0
 ```
 
 ### 3.4.2. IAM Image
@@ -222,12 +222,12 @@ docker load -i iam_image.tar
 ### 3.4.3. Update the docker file
 
 Change IRIS community edition to a licensed one.
-* containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
+* containers.intersystems.com/intersystems/iris:2022.2.0.368.0
 * add iris.key in key folder
 
 Edit the dockerfile to add on top of it this part
 ```dockerfile
-ARG IMAGE=containers.intersystems.com/intersystems/irishealth:2020.4.0.524.0
+ARG IMAGE=containers.intersystems.com/intersystems/iris:2022.2.0.368.0
 # Frist stage
 FROM $IMAGE as iris-iam
 COPY key/iris.key /usr/irissys/mgr/iris.key
